@@ -16,7 +16,7 @@ require 'dm-migrations'
 require 'dm-validations'
 require 'json'
 
-DataMapper.setup(:default, 'sqlite://' + Dir.pwd + '/db.sqlite')
+DataMapper.setup(:default, ENV['DATABASE_URL'] || 'sqlite3://' + Dir.pwd + '/simplescraper.db')
 
 # Extend default String length from 50 to 500
 DataMapper::Property::String.length(500)
