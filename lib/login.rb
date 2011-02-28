@@ -10,7 +10,7 @@
 
 require 'rubygems'
 require 'net/http'
-require 'haml'
+require 'mustache'
 require 'lib/rpx'
 
 module SimpleScraper
@@ -22,14 +22,14 @@ module SimpleScraper
       end
       
       get '/login' do
-        haml :login
+        mustache :login
       end
       
       # Login!
       post '/login' do
         if params[:token]
-          user_params = SimpleScraper::RPX.from_token params[:token]
-          default_name = user_params.nickname + '@' + URI.parse(user_params.identifier).host
+          user_params = SimpleScraper::RPX.user_info_from_token params[:token]
+          default_name = user_params[:nickname] + '@' + URI.parse(user_params[:identifier]).host
           
           user = find_model(:user).first_or_create(:name => default_name)
           raise SimpleScraper::ResourceError.new(user) unless user.saved?

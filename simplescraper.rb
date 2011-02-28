@@ -11,6 +11,7 @@
 
 require 'rubygems'
 require 'sinatra'
+require 'mustache/sinatra'
 require 'lib/schema'
 require 'lib/controller'
 require 'lib/login'
@@ -21,6 +22,10 @@ module SimpleScraper
       set :raise_errors, false
       set :show_exceptions, false
       set :sessions, true
+      set :mustache, {
+        :views     => 'views/',
+        :templates => 'templates'
+      }
     end
     #include Controller
     #include Login

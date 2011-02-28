@@ -69,7 +69,7 @@ module SimpleScraper
             properties.each do |property|
               filtered[property.name.to_sym.like] = unfiltered[property.name.to_s] if unfiltered.include? property.name.to_s
             end
-            all({:limit => SimpleScraper::MAX_RECORDS}.merge(filtered))
+            all({:limit => SimpleScraper::Schema::MAX_RECORDS}.merge(filtered))
           end
           
           def self.raw_name
@@ -127,22 +127,6 @@ module SimpleScraper
         
         def location
           model.raw_name + '/' + [*key].join('.')
-        end
-        
-        # Returns attributes, and lists of tags as arrays.
-        def describe
-          desc = attributes.clone
-          self.class.tag_names.each do |tag_name|
-            desc[tag_name.to_s + '/'] = []
-            send(tag_name).all.each do |tag|
-              desc[tag_name.to_s + '/'] << {
-                :name  => tag.full_name,
-                :id    => tag.attribute_get(:id),
-                :model => tag.model.raw_name
-              }
-            end
-          end
-          desc
         end
       end
     end
