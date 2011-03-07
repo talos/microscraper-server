@@ -2,7 +2,7 @@ source :gemcutter
 
 gem 'sinatra', '1.1.0'
 gem 'mustache', '0.9'
-gem 'do_postgres', '~> 0.10.2'
+gem 'do_postgres', '~>0.10.2'
 gem 'datamapper', '1.0.2'
 gem 'dm-postgres-adapter', '1.0.2'
 gem 'json', '1.5.1'
