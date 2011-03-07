@@ -21,6 +21,7 @@ GEM
     fastercsv (1.5.4)
     json (1.5.1-x86-mingw32)
     json_pure (1.5.1)
+    mustache (0.9.0)
     rack (1.2.1)
     sinatra (1.1.0)
       rack (~> 1.1)
@@ -39,4 +40,5 @@ DEPENDENCIES
   dm-types (= 1.0.2)
   dm-validations (= 1.0.2)
   json (= 1.5.1)
+  mustache (= 0.9)
   sinatra (= 1.1.0)
