@@ -75,7 +75,6 @@ DEPENDENCIES
   dm-timestamps (= 1.0.2)
   dm-types (= 1.0.2)
   dm-validations (= 1.0.2)
-  do_postgres (~> 0.10.2)
   json (= 1.5.1)
   mustache (= 0.9)
   sinatra (= 1.1.0)
