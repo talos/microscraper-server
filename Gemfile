@@ -1,5 +1,6 @@
 source :gemcutter
 gem 'sinatra', '1.1.0'
+gem 'mustache', '0.99.2'
 gem 'dm-core', '1.0.2'
 gem 'dm-types', '1.0.2'
 gem 'dm-migrations', '1.0.2'
