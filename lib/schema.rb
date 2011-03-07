@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/Usr/bin/ruby
 
 ###
 #   SimpleScraper Back 0.0.1
@@ -35,8 +35,8 @@ module SimpleScraper
               belongs_to args[1][0].to_sym, args[1][1], :key => true
             end
           end
-          SimpleScraper::Database::Schema.const_set(name.camelize.to_sym, klass)
-          name.underscore.pluralize.to_sym
+          SimpleScraper::Database::Schema.const_set(DataMapper::Inflector.camelize(name).to_sym, klass)
+          DataMapper::Inflector.pluralize(DataMapper::Inflector.underscore(name)).to_sym
         end
       end
       
@@ -60,7 +60,7 @@ module SimpleScraper
             end
             
             def self.raw_name
-              name.split('::').last.underscore
+              DataMapper::Inflector.underscore(name.split('::').last)
             end
             
             def self.related_model (relationship)
