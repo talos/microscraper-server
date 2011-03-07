@@ -15,6 +15,7 @@ require 'dm-types'
 require 'dm-migrations'
 require 'dm-validations'
 require 'dm-timestamps'
+#require 'dm-sqlite-adapter'
 
 # Convenience methods for collecting tags.
 module SimpleScraper
@@ -30,9 +31,9 @@ module SimpleScraper
               belongs_to args[0].to_sym, :key => true
               belongs_to args[1].to_sym, :key => true
             elsif args[0].class == Hash and args[0].length == 2
-              args = args[0].to_a
-              belongs_to args[0][0].to_sym, args[0][1], :key => true
-              belongs_to args[1][0].to_sym, args[1][1], :key => true
+              models = args[0].to_a
+              belongs_to models[0][0].to_sym, :model => models[0][1], :key => true
+              belongs_to models[1][0].to_sym, :model => models[1][1], :key => true
             end
           end
           SimpleScraper::Database::Schema.const_set(DataMapper::Inflector.camelize(name).to_sym, klass)
@@ -357,7 +358,7 @@ module SimpleScraper
       end
       
       # Rockin'.
-      Tagging.new('AreaLink', :source => 'Area', :target => 'Area')
+      Tagging.new('AreaLink', :source => "Area", :target => "Area")
       Tagging.new('PublishField', :info, :field_name)
       Tagging.new('InterpreterSourceData', :interpreter, :data)
       Tagging.new('InterpreterTargetData', :interpreter, :data)
