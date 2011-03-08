@@ -257,17 +257,17 @@ module SimpleScraper
         tag :infos,       :through => Resource
         tag :field_names, :through => Resource
         
-        tag :generator_sources, 'Generator', :through => :generator_source_datas, :via => :generator
+        tag :generator_targets, 'Generator', :through => :generator_source_datas, :via => :generator
         has n, :generator_source_datas
-        tag :generator_targets, 'Generator', :through => :generator_target_datas, :via => :generator
+        tag :generator_sources, 'Generator', :through => :generator_target_datas, :via => :generator
         has n, :generator_target_datas
         
-        tag :interpreter_sources, 'Interpreter', :through => :interpreter_source_datas, :via => :interpreter
+        tag :interpreter_targets, 'Interpreter', :through => :interpreter_source_datas, :via => :interpreter
         has n, :interpreter_source_datas
-        tag :interpreter_targets, 'Interpreter', :through => :interpreter_target_datas, :via => :interpreter
+        tag :interpreter_sources, 'Interpreter', :through => :interpreter_target_datas, :via => :interpreter
         has n, :interpreter_target_datas
         
-        tag :gatherer_targets, 'Gatherer', :through => :gatherer_target_datas, :via => :gatherer
+        tag :gatherer_sources, 'Gatherer', :through => :gatherer_target_datas, :via => :gatherer
         has n, :gatherer_target_datas
       end
 
