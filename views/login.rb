@@ -3,7 +3,7 @@ module SimpleScraper
     module Views
       class Login < Layout
         def login_url
-          request.url
+          @login_url
         end
       end
     end

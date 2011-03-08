@@ -131,7 +131,8 @@ module SimpleScraper
     
     ###### LOGIN
     get options.login_location do
-      mustache_response :login, :layout => false
+      @login_url = request.url
+      mustache_response :login
     end
     
     post options.login_location do
