@@ -34,7 +34,7 @@ module SimpleScraper
                 :urls => gatherer.urls.collect { |url| url.value },
                 :posts => gatherer.posts.collect { |post| { post.post_name => post.value } },
                 :headers => gatherer.headers.collect { |header| { header.header_name => header.value } },
-                :cookies => gatherer.cookies.collect { |cookie| { cookie.cookie_name => cookie.value } },
+                :cookies => gatherer.cookie_headers.collect { |cookie| { cookie.cookie_name => cookie.value } },
                 :target_attributes => gatherer.target_datas.collect { |target_data| identify_data(target_data) }
               }
             }
@@ -71,7 +71,7 @@ module SimpleScraper
                 :regexes => interpreter.patterns.collect { |pattern| pattern.regex },
                 :source_attributes => interpreter.source_datas.collect { |source_data| identify_data(source_data) },
                 :target_attributes => interpreter.target_datas.collect { |target_data| identify_data(target_data) },
-                :gatherers => gatherers.collect { |gatherer| gatherer.full_name }
+                :gatherers => interpreter.gatherers.collect { |gatherer| gatherer.full_name }
               }
             }
           end
