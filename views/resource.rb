@@ -27,9 +27,11 @@ module SimpleScraper
         end
 
         def relationships
-          @resource.class.tag_names.collect do |relationship_name|
+          # @resource.class.tag_names.collect do |relationship_name|
+          # TODO removing 'tag' stuff.
+          @resource.class.many_to_many_relationships.collect do |name, relationship|
             {
-              :name => relationship_name,
+              :name => name.to_s,
               :location => @resource.location + '/' + relationship_name.to_s + '/',
               :related_model => @model.related_model(relationship_name).raw_name,
               :related_model_location => @model.related_model(relationship_name).location,
@@ -37,7 +39,7 @@ module SimpleScraper
                 {
                   :name  => related_resource.full_name,
                   :resource_location => related_resource.location,
-                  :tag_location => @resource.location + '/' + relationship_name.to_s + '/' + related_resource.attribute_get(:id).to_s
+                  :relationship_location => @resource.location + '/' + relationship_name.to_s + '/' + related_resource.attribute_get(:id).to_s
                 }
               end
             }

@@ -26,9 +26,10 @@ module SimpleScraper
     configure do
       #use Rack::Flash
       
-      resource_dir = '/editor/'
+      #resource_dir = '/editor/'
       file_path = File.dirname(__FILE__)
-      db = Database.new( :directory => resource_dir )
+      #db = Database.new( :directory => resource_dir )
+      db = Database.new( )
       
       set :logging, true
       set :raise_errors, true
@@ -40,6 +41,7 @@ module SimpleScraper
       set :database, db
       set :users, db.get_model(:user)
       set :login_location, '/login'
+      set :logout_location, '/logout'
       set :session_id, :user_id
       set :authentication => RPX::Authentication.new(:api_key => '344cef0cc21bc9ff3b406a7b2c2a2dffc79d39dc')
       set :mustache, {
@@ -106,7 +108,7 @@ module SimpleScraper
       if @user.nil?
         redirect options.login_location
       else
-        redirect @user.location
+        mustache :home
       end
     end
     
@@ -134,11 +136,10 @@ module SimpleScraper
           user = @db.get_model(:user).get(session[options.session_id])
         end
       end
-      redirect user.location
+      redirect '/'
     end
-
-    ###### LOGOUT
-    get '/logout' do
+    
+    get options.logout_location do
       session[options.session_id] = nil
       mustache :logout
     end
@@ -155,8 +156,8 @@ module SimpleScraper
     
     ###### RESOURCES
     # Try find our resource.
-    before options.database.directory + ':model/:resource_id*' do 
-      @resource = @model.get(params[:resource_id]) or return
+    before options.database.directory + ':creator_id/:model/:resource_id*' do 
+      @resource = @model.get(:creator_id => params[:creator_id], :id => params[:resource_id]) or return
       @can_edit = @user.can_edit? @resource
       # If we have a resource, do a permissions check for PUT, DELETE, and POST.
       if ['PUT', 'DELETE', 'POST'].include? request.request_method and !@can_edit
@@ -165,13 +166,13 @@ module SimpleScraper
     end
     
     # Describe a resource.
-    get options.database.directory + ':model/:resource_id' do
+    get options.database.directory + ':creator_id/:model/:resource_id' do
       not_found unless @resource
       mustache :resource
     end
     
     # Replace a resource.
-    put options.database.directory + ':model/:resource_id' do
+    put options.database.directory + ':creator_id/:model/:resource_id' do
       if @resource
         @resource.modify params, params[:last_updated_at], @user
         @resource.save or resource_error @resource
@@ -182,35 +183,29 @@ module SimpleScraper
     end
     
     # Delete a resource and all its links.
-    delete options.database.directory + ':model/:resource_id' do
+    delete options.database.directory + ':creator_id/:model/:resource_id' do
       not_found unless @resource
       @resource.destroy ? @resource.destroy : not_found
       mustache :destroyed
     end
     
-    ###### TAG MODELS
-    # Redirect to the tag's model.  [this is in bad form. it's gonna go.]
-    # get options.database.directory + ':model/:relationship/' do
-    #   related_model = @model ? @model.related_model(params[:relationship]) : not_found
-    #   related_model ? redirect(related_model.location + '?' + request.query_string) : not_found
-    # end
-    
-    ####### TAGS
-    before options.database.directory + ':model/:resource_id/*' do
+    ####### LINKS
+    before options.database.directory + ':creator_id/model/:resource_id/*' do
       not_found unless @resource
     end
     
-    # Try find our relationship -- must be a valid one (listed in tag_names)
-    before options.database.directory + ':model/:resource_id/:relationship/*' do
+    # Link relationship must be many-to-many
+    before options.database.directory + ':creator_id/:model/:resource_id/:relationship/*' do
       @relationship_name = params[:relationship].to_sym
-      not_found unless @model.tag_names.include? @relationship_name
+      not_found unless @model.many_to_many_relationships.find { |name, relationship| name == @relationship_name }
       @relationship = @resource.send(@relationship_name)
       @related_model = @model.related_model(@relationship_name)
+      # @related_model = @model.relationships[@relationship_name]
     end
     
-    # Create a new tag.  Returns the location of the new tag.  This also creates resources.
-    put options.database.directory + ':model/:resource_id/:relationship/' do
-      # Split related resource into creator/resource components.
+    # Create a new link.  Returns the location of the new link.  This also creates resources.
+    put options.database.directory + ':creator_id/:model/:resource_id/:relationship/' do
+      # Split related resource into creator/resource components if the related model has a creator.
       if @related_model.relationships.include? :creator
         split_name = params[:name].split '/'
         if split_name.length == 1
@@ -222,12 +217,7 @@ module SimpleScraper
           error 'You may only use one slash, to separate the creator from the name of the resource.'
         end
       else # can't create a new resource without a creator, only do 'first'.
-        puts params[:name]
         @related_resource = @related_model.first(:name => params[:name]) or not_found
-        puts @related_resource.inspect
-        puts 'relationship: ' + @relationship.inspect
-        puts 'relationship: ' + @relationship.class.inspect
-        puts 'relationship: ' + @relationship_name.to_s
       end
 
       # @related_resource.save or resource_error @related_resource
@@ -237,17 +227,17 @@ module SimpleScraper
     end
     
     # If that worked, try to find our related resource.
-    before options.database.directory + ':model/:resource_id/:relationship/:related_id' do
+    before options.database.directory + ':creator_id/:model/:resource_id/:relationship/:related_id' do
       @related_resource = @relationship.get(params[:related_id])
     end
     
     # Redirect to the location of the actual resource.
-    get options.database.directory + ':model/:resource_id/:relationship/:related_id' do
+    get options.database.directory + ':creator_id/:model/:resource_id/:relationship/:related_id' do
       @related_resource ? redirect(@related_resource.location) : not_found
     end
     
     # Relate two known resources, possibly creating or replacing the second.
-    put options.database.directory + ':model/:resource_id/:relationship/:related_id' do
+    put options.database.directory + ':creator_id/:model/:resource_id/:relationship/:related_id' do
       if @related_resource.nil?
         @related_resource = @related_model.get(params[:related_id]) or not_found
       end
@@ -256,23 +246,23 @@ module SimpleScraper
       mustache :created # @related_resource.location
     end
 
-    # Delete a tagging.
-    delete options.database.directory + ':model/:resource_id/:relationship/:related_id' do
+    # Delete a link.
+    delete options.database.directory + ':creator_id/:model/:resource_id/:relationship/:related_id' do
       not_found unless @related_resource
-      @resource.untag(@relationship_name, @related_resource)
-      mustache :untagged
+      @resource.unlink(@relationship_name, @related_resource)
+      mustache :unlinked
     end
     
     # Collect scrapers: this pulls any interpreters, gatherers, and generators that eventually link to a piece of
     # data that would be published for an information in an area.
-    get '/scraper/:area/:info' do
-      @creator = @db.get_model(:user).first(:id => params[:creator]) #or return not_found # Creator is optional.
-      @area = @db.get_model(:area).first(:name => CGI::unescape(params[:area])) or return not_found
-      @info = @db.get_model(:info).first(:name => CGI::unescape(params[:info])) or return not_found
+    # get '/scraper/:area/:info' do
+    #   @creator = @db.get_model(:user).first(:id => params[:creator]) #or return not_found # Creator is optional.
+    #   @area = @db.get_model(:area).first(:name => CGI::unescape(params[:area])) or return not_found
+    #   @info = @db.get_model(:info).first(:name => CGI::unescape(params[:info])) or return not_found
 
-      @scraper = Scraper.new( @area, @info, @db, @creator )
-      #puts 'mustaching scraper...'
-      mustache :scraper
-    end
+    #   @scraper = Scraper.new( @area, @info, @db, @creator )
+    #   #puts 'mustaching scraper...'
+    #   mustache :scraper
+    # end
   end
 end
