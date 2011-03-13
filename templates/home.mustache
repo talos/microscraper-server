@@ -2,12 +2,9 @@
   <div class="home">
     {{user_name}}
   </div>
-  {{! TODO allow the user to change his/her name }}
-  {{! List the user's resources. }}
   <ul class="resources">
     {{#resources}}
-      <li>{{> relationship}}</li>
+      <li>{{> collection}}</li>
     {{/resources}}
   </ul>
-
 {{/html_format}}

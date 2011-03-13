@@ -37,6 +37,10 @@ module SimpleScraper
       @settings[:directory]
     end
     
+    def user_model
+      Schema::User
+    end
+
     def get_model (name)
       DataMapper::Model.descendants.find do |model|
         if model.respond_to? :raw_name

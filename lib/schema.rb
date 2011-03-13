@@ -17,6 +17,19 @@ require 'dm-timestamps'
 module SimpleScraper
   class Database
     module Schema
+      module DataMapper::Model
+        def raw_name
+          DataMapper::Inflector.underscore(name.split('::').last)
+        end
+
+        # TODO THIS IS ASSUMING EVERYTHING LIVES IN THE '/' DIRECTORY
+        def location
+          #'/editor/' + self.raw_name + '/'
+          # @settings[:directory] + self.raw_name + '/'
+          '/' + self.raw_name + '/'
+        end
+      end
+      
       class User
         include DataMapper::Resource
         
@@ -48,7 +61,7 @@ module SimpleScraper
         end
         
         def location
-          '/' + attribute_get(:id) + '/'
+          "/#{attribute_get(:name)}"
         end
       end
       
@@ -62,7 +75,6 @@ module SimpleScraper
             
             property :created_at, DataMapper::Property::DateTime, :writer => :private
             property :updated_at, DataMapper::Property::DateTime, :writer => :private
-            
 
             property :title, DataMapper::Property::String, :required => true, :unique_index => :creator_name_deleted
             # Make sure names don't contain a slash.
@@ -92,19 +104,8 @@ module SimpleScraper
               end
             end
             
-            def self.raw_name
-              DataMapper::Inflector.underscore(name.split('::').last)
-            end
-            
             def self.related_model (relationship)
               relationships[relationship.to_sym] ? relationships[relationship.to_sym].target_model : nil
-            end
-            
-            # TODO THIS IS ASSUMING EVERYTHING LIVES IN THE '/' DIRECTORY
-            def self.location
-              #'/editor/' + self.raw_name + '/'
-              # @settings[:directory] + self.raw_name + '/'
-              '/' + self.raw_name + '/'
             end
             
             def self.many_to_many_relationships
@@ -136,7 +137,7 @@ module SimpleScraper
           def unlink(relationship_name, link)
             relationship = model.relationships[relationship_name.to_sym]
             raise DataMapper::UnknownRelationshipError.new unless relationship.class == DataMapper::Associations::ManyToMany::Relationship
-            raise DataMapper::UnknownRelationshipError.new unless relationship.target_model == relationship.model
+            raise DataMapper::UnknownRelationshipError.new unless relationship.target_model == link.model
             
             send(relationship_name).intermediaries.get([*[key, link.key].flatten], [*[key, link.key].flatten]).destroy
           end
@@ -159,7 +160,7 @@ module SimpleScraper
           
           # Resource location.
           def location
-            creator.location + model.location + attribute_get(:id).to_s
+            creator.location + '/' + relationships[:creator].inverse.name.to_s + '/' + attribute_get(:id).to_s
           end
         end
       end
