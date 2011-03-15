@@ -130,6 +130,10 @@ module SimpleScraper
             def self.many_to_many_relationships
               relationships.select { |name, relationship| relationship.class == DataMapper::Associations::ManyToMany::Relationship }
             end
+            
+            def self.many_to_many_recursive_relationships
+              many_to_many_relationships.select { |name, relationship| relationship.options[:recurse] != false }
+            end
           end
           
           def validate_title
@@ -229,7 +233,7 @@ module SimpleScraper
             relevant_attributes = Hash[mutable_attributes]
             relevant_attributes.delete(:description)
             relevant_attributes.delete(:title)
-            relevant_relationships = Hash[model.many_to_many_relationships.collect do |name, relationship|
+            relevant_relationships = Hash[model.many_to_many_recursive_relationships.collect do |name, relationship|
                                             [
                                              name, send(name).collect do |resource|
                                                ## Add related objects into the destination object.
@@ -245,7 +249,6 @@ module SimpleScraper
             dest[model.raw_name] = {} if dest[model.raw_name].nil?
             dest[model.raw_name][full_name] = obj
             dest
-            #puts relevant_relationships.inspect
           end
 
           def to_json
@@ -257,29 +260,29 @@ module SimpleScraper
       class Default
         include Resource
         
-        #has n, :scrapers,                      :through => DataMapper::Resource
-        has n, :substitutes_for_datas, 'Data', :through => DataMapper::Resource
-        property :value, String #, :default => '' #, :required => true
-      end
-      
-      class Scraper
-        include Resource
-        
-        has n, :defaults, :through => DataMapper::Resource
-        has n, :datas,    :through => DataMapper::Resource
+        has n, :datas,                      :through => DataMapper::Resource, :recurse => false
+        has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
+        property :value, String
       end
       
       class Data
         include Resource
         
-        #has n, :scrapers, :through => DataMapper::Resource
+        has n, :defaults, :through => DataMapper::Resource
+        has n, :scrapers, :through => DataMapper::Resource
+      end
+      
+      class Scraper
+        include Resource
+        
+        has n, :datas, :through => DataMapper::Resource, :recurse => false
         
         property :regex,        String,  :default => '//' # Regexp.new('')
         property :match_number, Integer,                     :required => false
         property :publish,      Boolean, :default => false,  :required => true
         
-        has n, :web_pages,            :through => DataMapper::Resource
-        has n, :source_datas, 'Data', :through => DataMapper::Resource
+        has n, :web_pages,                  :through => DataMapper::Resource
+        has n, :source_scrapers, 'Scraper', :through => DataMapper::Resource
       end
       
       class Regex
@@ -291,20 +294,20 @@ module SimpleScraper
       class WebPage
         include Resource
         
-        #has n, :datas, :through => DataMapper::Resource
+        has n, :scrapers, :through => DataMapper::Resource, :recurse => false
         
         has n, :terminates, 'Regex', String
         
-        has n, :urls, :through => DataMapper::Resource
-        has n, :posts, :through => DataMapper::Resource
-        has n, :headers, :through => DataMapper::Resource
+        has n, :urls,           :through => DataMapper::Resource
+        has n, :posts,          :through => DataMapper::Resource
+        has n, :headers,        :through => DataMapper::Resource
         has n, :cookie_headers, :through => DataMapper::Resource
       end
       
       class Url
         include Resource
         
-        #has n, :web_pages, :through => DataMapper::Resource
+        has n, :web_pages, :through => DataMapper::Resource, :recurse => false
         
         property :value, DataMapper::Property::URI
       end
@@ -312,7 +315,7 @@ module SimpleScraper
       class Post
         include Resource
 
-        #has n, :web_pages, :through => DataMapper::Resource
+        has n, :web_pages, :through => DataMapper::Resource, :recurse => false
 
         property :name,  String
         property :value, String
@@ -321,16 +324,19 @@ module SimpleScraper
       class Header
         include Resource
 
-        #has n, :web_pages, :through => DataMapper::Resource
+        has n, :web_pages, :through => DataMapper::Resource, :recurse => false
 
         property :name,  String
         property :value, String
       end
 
-      class CookieHeader
+      #class CookieHeaders
+      class Cookie
         include Resource
-
-        #has n, :web_pages, :through => DataMapper::Resource
+        
+        repository_name 'CookieHeaders'
+        
+        has n, :web_pages, :through => DataMapper::Resource, :recurse => false
 
         property :name,  String
         property :value, String
