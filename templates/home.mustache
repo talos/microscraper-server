@@ -1,8 +1,15 @@
 {{#html_format}}
   {{#user}}
     <div class="home">
-      {{name}}
+      {{full_name}}
     </div>
-    {{> associations}}
+    <form method="put" action="{{location}}">
+      <input name="title" type="text">
+      <input type="submit" value="Change Name">
+    </form>
+    <div>
+      Your contributions:
+      {{> associations}}
+    </div>
   {{/user}}
 {{/html_format}}

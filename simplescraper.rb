@@ -34,7 +34,10 @@ module SimpleScraper
       
       set :database, db
       set :users, db.user_model
+      set :index_location, '/'
+      set :home_location, '/home'
       set :login_location, '/login'
+      set :registration_location, '/login'
       set :logout_location, '/logout'
       set :session_id, :user_id
       set :authentication => RPX::Authentication.new(:api_key => '344cef0cc21bc9ff3b406a7b2c2a2dffc79d39dc')
@@ -111,12 +114,25 @@ module SimpleScraper
         @json_format = true
       end
     end
+    
+    get options.index_location do
+      mustache :index
+    end
 
-    get '/' do
+    # Force the user to log in before going home.
+    get options.home_location do
       if @user.nil?
         redirect options.login_location
       else
         mustache :home
+      end
+    end
+    
+    # Allow user to change name via home
+    put options.home_location do
+      if params[:title] and not @user.nil?
+        @user.title = params[:title]
+        @user.save or resource_error @user
       end
     end
     
@@ -144,7 +160,7 @@ module SimpleScraper
           user = @db.get_model(:user).get(session[options.session_id])
         end
       end
-      redirect '/'
+      redirect options.home_location
     end
     
     get options.logout_location do
