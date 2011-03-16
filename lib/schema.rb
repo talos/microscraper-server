@@ -37,16 +37,17 @@ module SimpleScraper
         property :id,   DataMapper::Property::Serial, :accessor => :private
         
         property :immutable_name, DataMapper::Property::String, :required => true, :unique => true, :accessor => :private
-        property :name, DataMapper::Property::String, :required => true, :unique => true
+        property :title, DataMapper::Property::String, :required => true, :unique => true
         
         has n, :scrapers,   :child_key => [ :creator_id ]
+        has n, :defaults,   :child_key => [ :creator_id ]
         has n, :datas,      :child_key => [ :creator_id ]
         has n, :web_pages,  :child_key => [ :creator_id ]
         
         has n, :urls,    :child_key => [ :creator_id ]
         has n, :posts,   :child_key => [ :creator_id ]
         has n, :headers, :child_key => [ :creator_id ]
-        has n, :cookie_headers, :child_key => [ :creator_id ]
+        has n, :cookies, 'Cookie',  :child_key => [ :creator_id ]
         has n, :regexes, :child_key => [ :creator_id ]
         
         # Only the user can modify his/her own resource.
@@ -59,16 +60,16 @@ module SimpleScraper
         end
 
         def full_name
-          name
+          title
         end
         
-        # Default name to immutable name.
+        # Default title to immutable name.
         before :valid? do
-          send(:name=, immutable_name) if name.nil?
+          send(:title=, immutable_name) if title.nil?
         end
         
         def location
-          "/#{attribute_get(:name)}"
+          "/#{full_name}"
         end
         
         ## TODO: DRY this out
@@ -132,8 +133,23 @@ module SimpleScraper
             end
             
             def self.many_to_many_recursive_relationships
-              many_to_many_relationships.select { |name, relationship| relationship.options[:recurse] != false }
+              many_to_many_relationships.select do |name, relationship|
+                if @do_not_recurse
+                  @do_not_recurse.include? name.to_sym ? false : true
+                else
+                  true
+                end
+              end
             end
+            
+            def self.do_not_recurse (*relationships)
+              @do_not_recurse = [] if @do_not_recurse.nil?
+              @do_not_recurse.push(*relationships)
+            end
+          end
+          
+          def do_not_recurse
+            @do_not_recurse
           end
           
           def validate_title
@@ -166,7 +182,7 @@ module SimpleScraper
           end
 
           def full_name
-            creator.name + '/' + title
+            creator.full_name + '/' + title
           end
 
           # Safely change a resource's attributes
@@ -260,7 +276,9 @@ module SimpleScraper
       class Default
         include Resource
         
-        has n, :datas,                      :through => DataMapper::Resource, :recurse => false
+        has n, :datas, :through => DataMapper::Resource
+        do_not_recurse :datas
+        
         has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
         property :value, String
       end
@@ -275,7 +293,8 @@ module SimpleScraper
       class Scraper
         include Resource
         
-        has n, :datas, :through => DataMapper::Resource, :recurse => false
+        has n, :datas, :through => DataMapper::Resource #, :recurse => false
+        do_not_recurse :datas
         
         property :regex,        String,  :default => '//' # Regexp.new('')
         property :match_number, Integer,                     :required => false
@@ -294,29 +313,32 @@ module SimpleScraper
       class WebPage
         include Resource
         
-        has n, :scrapers, :through => DataMapper::Resource, :recurse => false
+        has n, :scrapers, :through => DataMapper::Resource #, :recurse => false
+        do_not_recurse :scrapers
         
         has n, :terminates, 'Regex', String
         
         has n, :urls,           :through => DataMapper::Resource
         has n, :posts,          :through => DataMapper::Resource
         has n, :headers,        :through => DataMapper::Resource
-        has n, :cookie_headers, :through => DataMapper::Resource
+        has n, :cookies, 'Cookie', :through => DataMapper::Resource
       end
       
       class Url
         include Resource
         
-        has n, :web_pages, :through => DataMapper::Resource, :recurse => false
+        has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
+        do_not_recurse :web_pages
         
         property :value, DataMapper::Property::URI
       end
-      
+        
       class Post
         include Resource
 
-        has n, :web_pages, :through => DataMapper::Resource, :recurse => false
-
+        has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
+        do_not_recurse :web_pages
+        
         property :name,  String
         property :value, String
       end
@@ -324,7 +346,8 @@ module SimpleScraper
       class Header
         include Resource
 
-        has n, :web_pages, :through => DataMapper::Resource, :recurse => false
+        has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
+        do_not_recurse :web_pages
 
         property :name,  String
         property :value, String
@@ -334,9 +357,10 @@ module SimpleScraper
       class Cookie
         include Resource
         
-        repository_name 'CookieHeaders'
+        storage_names[:default] = 'cookie_headers'
         
-        has n, :web_pages, :through => DataMapper::Resource, :recurse => false
+        has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
+        do_not_recurse :web_pages
 
         property :name,  String
         property :value, String
