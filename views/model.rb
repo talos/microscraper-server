@@ -14,12 +14,13 @@ module SimpleScraper
             end
           end
           filters[:limit] = MAX_RESOURCES
-          @model.all(filters).collect do |resource|
-            {
-              :name => resource.full_name,
-              :location => resource.location
-            }
-          end
+          [{
+             :name => @model.raw_name,
+             :size => @model.all(filters).length,
+             :model_location => @model.location,
+             :location => @model.location,
+             :collection => @model.all(filters)
+           }]
         end
         
         def to_json

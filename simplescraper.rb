@@ -39,8 +39,23 @@ module SimpleScraper
       set :login_location, '/login'
       set :registration_location, '/login'
       set :logout_location, '/logout'
-      set :css_location, '/css/simplescraper.css'
-      set :theme_location, '/css/pepper-grinder/jquery-ui-1.8.10.custom.css'
+      js_dir = '/js'
+      local_js = [
+                  'jquery-1.5.1.min.js',
+                  'jquery-ui-1.8.10.custom.min.js',
+                  'jquery-form.js',
+                  'simplescraper.js'
+                 ]
+      set :javascripts, local_js.collect { |file| "#{js_dir}/#{file}" }
+      set :default_jquery_theme, 'smoothness'
+      
+      css_dir = '/css'
+      local_css = [
+                   'simplescraper.css'
+                  ]
+      set :css_dir, css_dir
+      set :stylesheets, local_css.collect { |file| "#{css_dir}/#{file}" }
+      
       set :session_id, :user_id
       set :authentication => RPX::Authentication.new(:api_key => '344cef0cc21bc9ff3b406a7b2c2a2dffc79d39dc')
       set :mustache, {
@@ -99,7 +114,6 @@ module SimpleScraper
     end
     
     before do
-      @path = request.path
       @user = options.users.get(session[options.session_id])
       @db = options.database
       @options = options
@@ -111,6 +125,8 @@ module SimpleScraper
 
       case determine_request_type
       when :html
+        theme = params[:theme] ? params[:theme] : options.default_jquery_theme
+        options.stylesheets << "#{options.css_dir}/#{theme}/jquery-ui-1.8.10.custom.css"
         @html_format = true
       when :json
         @json_format = true

@@ -1,56 +1,59 @@
 {{#resource}}
   {{#html_format}}
     <div class="resource ui-widget">
-    {{! The resource's name. }}
-    <span class="name ui-widget-header">
-      {{#model}}
-        <a href="{{location}}">
-          {{raw_name}}
-        </a>
-      {{/model}}
-      "{{full_name}}"
-      {{! Delete the resource. }}
-      {{#can_edit}}
-        <form method="delete" action="{{location}}">
-          <button type="submit">Delete</button>
-        </form>
-      {{/can_edit}}
-    </span>
-    {{! List the resource's immutable attributes. }}
-    <div class="attribute ui-widget">
-      <span class="ui-widget-header ui-corner-top">Attributes</span>
-      <div class="ui-widget-content">
-        <ul class="immutable">
-          {{#immutables}}
-            <li class="attribute">{{name}}: {{value}}</li>
-          {{/immutables}}
-          {{^can_edit}}
-          {{! List the resource's mutable attributes with immutables, if we can't edit. }}
-          {{#mutables}}
-            <li class="attribute">{{name}}: {{value}}</li>
-          {{/mutables}}
-      {{/can_edit}}
-        </ul>
+      <div>
+        {{! The resource's name. }}
+        {{#model}}
+          <a href="{{location}}">
+            {{raw_name}}
+          </a>
+        {{/model}}
+        "{{full_name}}"
+        {{! Delete the resource. }}
         {{#can_edit}}
-          {{! List the resource's mutable attributes separately, if we can edit.  }}
-          <ul class="mutable">
-            <form method="put" action="{{location}}">
-              {{! Hidden input for update consistency. }}
-              <input type="hidden" name="last_updated_at" value="{{updated_at}}">
-              {{#mutables}}
-                <li class="attribute">
-                  <label for="{{name}}">{{name}}:</label>
-                  <textarea name="{{name}}">{{value}}</textarea>
-                </li>
-              {{/mutables}}
-              <button type="submit">Update</button>
-            </form>
-          </ul>
+          <form method="delete" action="{{location}}">
+            <button type="submit">Delete</button>
+          </form>
         {{/can_edit}}
       </div>
-    </div>
-    {{! List the resource's relationships. }}
-    {{> associations}}
+      {{! List the resource's immutable attributes. }}
+      <div class="tabs">
+        <ul>
+          <li><a href="#attributes">Attributes</a></li>
+          <li><a href="#associations">Associations</a></li>
+        </ul>
+        <div id="attributes" class="ui-widget ui-widget-content">
+          <ul class="immutable">
+            {{#immutables}}
+              <li class="attribute">{{name}}: {{value}}</li>
+            {{/immutables}}
+            {{^can_edit}}
+            {{! List the resource's mutable attributes with immutables, if we can't edit. }}
+            {{#mutables}}
+              <li class="attribute">{{name}}: {{value}}</li>
+            {{/mutables}}
+        {{/can_edit}}
+          </ul>
+          {{#can_edit}}
+            {{! List the resource's mutable attributes separately, if we can edit.  }}
+            <ul class="mutable">
+              <form method="put" action="{{location}}">
+                {{! Hidden input for update consistency. }}
+                <input type="hidden" name="last_updated_at" value="{{updated_at}}">
+                {{#mutables}}
+                  <li class="attribute">
+                    <label for="{{name}}">{{name}}:</label>
+                    <textarea name="{{name}}">{{value}}</textarea>
+                  </li>
+                {{/mutables}}
+                <button type="submit">Update</button>
+              </form>
+            </ul>
+          {{/can_edit}}
+        </div>
+        {{! List the resource's relationships. }}
+        {{> associations}}
+      </div>
   {{/html_format}}
 {{/resource}}
 {{#json_format}}

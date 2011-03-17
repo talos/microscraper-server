@@ -1,10 +1,13 @@
 {{#html_format}}
   {{#user}}
-    <div class="home ui-widget">
-      Your contributions:
+    <div class="home tabs ui-widget">
+      <ul>
+        <li><a href="#associations">Resources</a></li>
+        <li><a href="#settings">Settings</a></li>
+      </ul>
       {{> associations}}
       {{#options}}
-      <div class="modify ui-widget-content">
+      <div id="settings" class="ui-widget-content">
         <form method="put" action="{{home_location}}">
           <input name="title" type="text" />
           <button type="submit">Change Name</button>

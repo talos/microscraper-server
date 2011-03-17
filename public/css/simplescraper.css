@@ -11,11 +11,12 @@ ul {
 form {
     display: inline-block;
 }
-li.resource {
-    display: inline-block;
-}
+
+/* Make tags look better. */
 li.tag {
     display: inline-block;
+    margin: .2em;
+    padding: .2em;
 }
 
 /* Hide immutable attributes. */
@@ -23,7 +24,12 @@ li.tag {
     display: none;
 }
 textarea {
-    right: 0px;
+    width: 100%;
+}
+
+/* Prevent associations from being too wide. */
+#associations {
+   width: 90%;
 }
 
 /* Convenience classes. */
@@ -32,9 +38,4 @@ textarea {
 }
 .float-right {
     float: right;
-}
-
-/* user_bar classes. */
-.user_bar {
-
 }

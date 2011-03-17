@@ -2,13 +2,8 @@
   {{#html_format}}
     <div class="model ui-widget">
       {{! The model's name. }}
-      <div class="name ui-widget-header">Model "{{raw_name}}"</div>
-      {{! The name of resources in this model. }}
-      <ul class="associations">
-        {{#associations}}
-          <li class="resource"><a href="{{location}}">{{name}}</a></li>
-        {{/associations}}
-      </ul>
+      <span class="ui-widget-header ui-corner-top">Model "{{raw_name}}"</span>
+      {{! Resources in this model. }}
       {{> associations}}
     </div>
   {{/html_format}}
