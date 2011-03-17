@@ -212,7 +212,7 @@ module SimpleScraper
     # Try find our resource.
     before options.database.directory + ':creator_title/:model/:resource_title*' do 
       @resource = @model.first(:title => CGI.unescape(params[:resource_title])) or return
-      @can_edit = @user.can_edit? @resource
+      @can_edit = @user.nil? ? false : @user.can_edit?(@resource)
       # If we have a resource, do a permissions check for PUT, DELETE, and POST.
       if ['PUT', 'DELETE', 'POST'].include? request.request_method and !@can_edit
         error "#{@user.full_name} lacks permissions to modify #{@resource.model.raw_name} #{resource.full_name}"

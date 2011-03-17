@@ -9,18 +9,16 @@
           </a>
         {{/model}}
         "{{full_name}}"
-        {{! Delete the resource. }}
-        {{#can_edit}}
-          <form method="delete" action="{{location}}">
-            <button type="submit">Delete</button>
-          </form>
-        {{/can_edit}}
       </div>
       {{! List the resource's immutable attributes. }}
       <div class="tabs">
         <ul>
           <li><a href="#attributes">Attributes</a></li>
           <li><a href="#associations">Associations</a></li>
+          <li><a href="#test">Test</a></li>
+          {{#can_edit}}
+            <li><a href="#delete">Delete</a></li>
+          {{/can_edit}}
         </ul>
         <div id="attributes" class="ui-widget ui-widget-content">
           <ul class="immutable">
@@ -53,6 +51,18 @@
         </div>
         {{! List the resource's relationships. }}
         {{> associations}}
+        {{! Test to see whether the resource 'works' }}
+        <div id="test">
+
+        </div>
+        {{! Delete the resource. }}
+        <div id="delete">
+          {{#can_edit}}
+            <form method="delete" action="{{location}}">
+              <button type="submit">Delete</button>
+            </form>
+          {{/can_edit}}
+        </div>
       </div>
   {{/html_format}}
 {{/resource}}
