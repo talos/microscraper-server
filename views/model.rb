@@ -24,7 +24,7 @@ module SimpleScraper
         end
         
         def to_json
-          associations.collect { |resource| { :value => resource[:name] } }.to_json
+          associations.first[:collection].to_a.collect { |resource| { :value => resource.full_name } }.to_json
         end
       end
     end
