@@ -1,0 +1,40 @@
+/* Default margins & padding. */
+div {
+    padding: .4em;
+}
+ul {
+    padding: 0px;
+    margin: 0px;
+}
+
+/* Permit inline-block forms. */
+form {
+    display: inline-block;
+}
+li.resource {
+    display: inline-block;
+}
+li.tag {
+    display: inline-block;
+}
+
+/* Hide immutable attributes. */
+.immutable {
+    display: none;
+}
+textarea {
+    right: 0px;
+}
+
+/* Convenience classes. */
+.float-left {
+    float: left;
+}
+.float-right {
+    float: right;
+}
+
+/* user_bar classes. */
+.user_bar {
+
+}

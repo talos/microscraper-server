@@ -6,14 +6,6 @@ module SimpleScraper
       class Model < Layout
         MAX_RESOURCES = 100
         
-        def name
-          @model.raw_name
-        end
-        
-        def location
-          @model.location
-        end
-        
         def associations
           filters = {}
           @model.properties.each do |property|

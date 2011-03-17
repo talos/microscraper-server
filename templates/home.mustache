@@ -1,15 +1,16 @@
 {{#html_format}}
   {{#user}}
-    <div class="home">
-      {{full_name}}
-    </div>
-    <form method="put" action="{{location}}">
-      <input name="title" type="text">
-      <input type="submit" value="Change Name">
-    </form>
-    <div>
+    <div class="home ui-widget">
       Your contributions:
       {{> associations}}
+      {{#options}}
+      <div class="modify ui-widget-content">
+        <form method="put" action="{{home_location}}">
+          <input name="title" type="text" />
+          <button type="submit">Change Name</button>
+        </form>
+      </div>
+      {{/options}}
     </div>
   {{/user}}
 {{/html_format}}

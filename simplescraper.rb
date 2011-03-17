@@ -39,6 +39,8 @@ module SimpleScraper
       set :login_location, '/login'
       set :registration_location, '/login'
       set :logout_location, '/logout'
+      set :css_location, '/css/simplescraper.css'
+      set :theme_location, '/css/pepper-grinder/jquery-ui-1.8.10.custom.css'
       set :session_id, :user_id
       set :authentication => RPX::Authentication.new(:api_key => '344cef0cc21bc9ff3b406a7b2c2a2dffc79d39dc')
       set :mustache, {
