@@ -14,6 +14,9 @@ require 'dm-migrations'
 require 'dm-validations'
 require 'dm-timestamps'
 require 'json'
+require 'net/http'
+require 'uri'
+require 'mustache'
 
 module SimpleScraper
   class Database
@@ -68,9 +71,9 @@ module SimpleScraper
           send(:title=, immutable_name) if title.nil?
         end
         
-        def location
-          "/#{full_name}"
-        end
+        #def location
+        # "/#{full_name}"
+        #end
         
         ## TODO: DRY this out
         def associations
@@ -79,7 +82,8 @@ module SimpleScraper
               :name => name,
               :size => send(name).length,
               :model_location => relationship.target_model.location,
-              :location => location + '/' + name + '/',
+              # :location => location + '/' + name + '/',
+              :location => relationship.target_model.location + full_name + '/',
               :collection => send(name)
             }
           end
@@ -200,7 +204,8 @@ module SimpleScraper
           
           # Resource location.
           def location
-            creator.location + '/' + relationships[:creator].inverse.name.to_s + '/' + attribute_get(:title)
+            #creator.location + '/' + relationships[:creator].inverse.name.to_s + '/' + attribute_get(:title)
+            model.location + full_name
           end
 
           def immutables
@@ -218,6 +223,16 @@ module SimpleScraper
 
           def mutables
             mutable_attributes.collect { |name, value| {:name => name, :value => value}}
+          end
+
+          # TODO Determine what values could be fed in for testing.
+          def inputs
+            model.many_to_many_recursive_relationships.collect do |relationship|
+              
+            end
+            attributes.collect do |attribute|
+              Mustache.templateify(attribute)
+            end
           end
           
           def associations
@@ -237,8 +252,7 @@ module SimpleScraper
               }
             end
           end
-
-          #def export(recurse = true)
+          
           def export (options = {})
             settings = {
               :into => {},
@@ -247,21 +261,17 @@ module SimpleScraper
             
             dest = settings[:into]
             
-            relevant_attributes = Hash[mutable_attributes]
-            relevant_attributes.delete(:description)
-            relevant_attributes.delete(:title)
-            relevant_relationships = Hash[model.many_to_many_recursive_relationships.collect do |name, relationship|
-                                            [
-                                             name, send(name).collect do |resource|
-                                               ## Add related objects into the destination object.
-                                               resource.export(:into => dest, :recurse => settings[:recurse])
-                                               resource.full_name
-                                             end
-                                            ]
-                                          end]
-            relevant_relationships.delete('editors')
-
-            obj = relevant_attributes.merge(relevant_relationships)
+            attributes_for_export = Hash[mutable_attributes].delete(:description).delete(:title)
+            associations_for_export = Hash[model.many_to_many_recursive_relationships.collect do |name, relationship|
+                   [
+                    name, send(name).collect do |resource|
+                      ## Add related objects into the destination object.
+                      resource.export(:into => dest, :recurse => settings[:recurse])
+                      resource.full_name
+                    end
+                   ]
+                 end].delete('editors')
+            obj = attributes_for_export(options).merge(associations_for_export)
 
             dest[model.raw_name] = {} if dest[model.raw_name].nil?
             dest[model.raw_name][full_name] = obj
@@ -282,6 +292,10 @@ module SimpleScraper
         
         has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
         property :value, String
+
+        def test 
+          value
+        end
       end
       
       class Data
@@ -289,26 +303,47 @@ module SimpleScraper
         
         has n, :defaults, :through => DataMapper::Resource
         has n, :scrapers, :through => DataMapper::Resource
+        
+        def test
+          scrapers.all.collect do |scraper|
+            { scraper.full_name : scraper.test }
+          end
+        end
       end
       
       class Scraper
         include Resource
         
-        has n, :datas, :through => DataMapper::Resource #, :recurse => false
+        has n, :datas, :through => DataMapper::Resource
         do_not_recurse :datas
         
-        property :regex,        String,  :default => '//' # Regexp.new('')
+        property :regex,        String,  :default => ''
         property :match_number, Integer,                     :required => false
         property :publish,      Boolean, :default => false,  :required => true
         
         has n, :web_pages,                  :through => DataMapper::Resource
         has n, :source_scrapers, 'Scraper', :through => DataMapper::Resource
+
+        def test
+          pattern = Regexp.new(regex)
+          (web_pages + source_scrapers).collect { |source| source.test }.collect do |value|
+            if match_number.nil?
+              pattern.match(value).to_a
+            else
+              pattern.match(value).to_a[match_number]
+            end
+          end
+        end
       end
       
       class Regex
         include Resource
         
-        property :regex, String, :default => '//' # Regexp.new('')
+        property :regex, String, :default => ''
+
+        def test
+          Regexp.new(regex).to_s
+        end
       end
       
       class WebPage
@@ -323,6 +358,18 @@ module SimpleScraper
         has n, :posts,          :through => DataMapper::Resource
         has n, :headers,        :through => DataMapper::Resource
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
+        
+        def test
+          urls.collect do |url|
+            if posts.length == 0
+              req = Net::HTTP::Get
+            else
+              req = Net::HTTP::Post
+              req.
+            end
+            
+          end
+        end
       end
       
       class Url
@@ -332,6 +379,10 @@ module SimpleScraper
         do_not_recurse :web_pages
         
         property :value, DataMapper::Property::URI
+        
+        def test (inputs)
+          Mustache.render(value, inputs)
+        end
       end
         
       class Post
@@ -353,8 +404,7 @@ module SimpleScraper
         property :name,  String
         property :value, String
       end
-
-      #class CookieHeaders
+      
       class Cookie
         include Resource
         
