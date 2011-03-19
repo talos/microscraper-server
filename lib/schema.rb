@@ -17,6 +17,7 @@ require 'json'
 require 'net/http'
 require 'uri'
 require 'mustache'
+require 'lib/mustache-helpers'
 
 module SimpleScraper
   class Database
@@ -137,6 +138,7 @@ module SimpleScraper
               relationships.select { |name, relationship| relationship.class == DataMapper::Associations::ManyToMany::Relationship }
             end
             
+            # TODO not working with web_page
             def self.many_to_many_recursive_relationships
               many_to_many_relationships.select do |name, relationship|
                 if @do_not_recurse
@@ -225,14 +227,18 @@ module SimpleScraper
             mutable_attributes.collect { |name, value| {:name => name, :value => value}}
           end
 
-          # TODO Determine what values could be fed in for testing.
-          def inputs
-            model.many_to_many_recursive_relationships.collect do |relationship|
-              
+          # Determine what values could possibly be fed in for testing.
+          def variables
+            variables = []
+            model.many_to_many_recursive_relationships.each do |name, relationship|
+              send(name).each do |related_resource|
+                variables.push(*related_resource.variables)
+              end
             end
             attributes.collect do |attribute|
-              Mustache.templateify(attribute)
+              variables.push(*Mustache::SimpleScraper.extract_variables(attribute))
             end
+            variables
           end
           
           def associations
@@ -306,7 +312,7 @@ module SimpleScraper
         
         def test
           scrapers.all.collect do |scraper|
-            { scraper.full_name : scraper.test }
+            { scraper.full_name => scraper.test }
           end
         end
       end
@@ -365,7 +371,7 @@ module SimpleScraper
               req = Net::HTTP::Get
             else
               req = Net::HTTP::Post
-              req.
+              #req.
             end
             
           end
