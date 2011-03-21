@@ -173,7 +173,7 @@ module MicroScraper
 
           def modify (new_attributes, last_updated_at, editor)
             if updated_at != last_updated_at
-              raise DataMapper::UpdateConflictError.new('This resource has been updated by ' + SimpleScraper::Users.get(last_editor_id) + ' since you last loaded it.  Changes not saved.')
+              raise DataMapper::UpdateConflictError.new
             end
             super new_attributes, last_updated_at, editor
             @last_editor = editor
@@ -236,7 +236,7 @@ module MicroScraper
               end
             end
             attributes.collect do |attribute|
-              variables.push(*Mustache::SimpleScraper.extract_variables(attribute))
+              variables.push(*Mustache::MicroScraper.extract_variables(attribute))
             end
             variables
           end
