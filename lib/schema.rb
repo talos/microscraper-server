@@ -48,7 +48,7 @@ module MicroScraper
         has n, :datas,      :child_key => [ :creator_id ]
         has n, :web_pages,  :child_key => [ :creator_id ]
         
-        has n, :urls,    :child_key => [ :creator_id ]
+        #has n, :urls,    :child_key => [ :creator_id ]
         has n, :posts,   :child_key => [ :creator_id ]
         has n, :headers, :child_key => [ :creator_id ]
         has n, :cookies, 'Cookie',  :child_key => [ :creator_id ]
@@ -335,20 +335,21 @@ module MicroScraper
         
         has n, :terminates, 'Regex', String
         
-        has n, :urls,           :through => DataMapper::Resource
+        #has n, :urls,           :through => DataMapper::Resource
+        property :url, String, :default ''
         has n, :posts,          :through => DataMapper::Resource
         has n, :headers,        :through => DataMapper::Resource
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
       end
       
-      class Url
-        include Resource
+      # class Url
+      #   include Resource
         
-        has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
-        do_not_recurse :web_pages
+      #   has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
+      #   do_not_recurse :web_pages
         
-        property :value, DataMapper::Property::URI
-      end
+      #   property :value, DataMapper::Property::URI
+      # end
         
       class Post
         include Resource
