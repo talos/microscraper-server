@@ -1,5 +1,5 @@
-module SimpleScraper
-  class Application
+module MicroScraper
+  class Server
     module Views
       class Error < Layout
         def errors

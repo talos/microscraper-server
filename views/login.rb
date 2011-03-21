@@ -1,10 +1,8 @@
-module SimpleScraper
-  class Application
+module MicroScraper
+  class Server
     module Views
       class Login < Layout
-        def login_url
-          @login_url
-        end
+        
       end
     end
   end

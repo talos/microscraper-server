@@ -1,5 +1,5 @@
 ###
-#   SimpleScraper Back 0.0.1
+#   MicroScraper Server
 #
 #   Copyright 2010, AUTHORS.txt
 #   Licensed under the MIT license.
@@ -19,12 +19,9 @@ require 'uri'
 require 'mustache'
 require 'lib/mustache-helpers'
 
-module SimpleScraper
+module MicroScraper
   class Database
     module Schema
-      class CannotTestError < RuntimeError
-      end
-      
       module DataMapper::Model
         def raw_name
           DataMapper::Inflector.underscore(name.split('::').last)
@@ -156,10 +153,6 @@ module SimpleScraper
               @do_not_recurse = [] if @do_not_recurse.nil?
               @do_not_recurse.push(*relationships)
             end
-
-            def self.test (&block)
-              @test = block
-            end
           end
           
           def do_not_recurse
@@ -247,15 +240,6 @@ module SimpleScraper
             end
             variables
           end
-
-          # Test the object.
-          def test test_vars
-            # Do not run the test unless each prerequisite value is specified.
-            variables.each do |variable|
-              raise CannotTestError.new("Cannot run test for #{full_name} without #{variable}.") unless test_vars.include? variable
-            end
-            @test ? @test.call(test_vars) : test_vars
-          end
           
           def associations
             model.many_to_many_relationships.collect do |name, relationship|
@@ -314,14 +298,6 @@ module SimpleScraper
         
         has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
         property :value, String
-        
-        # Default sets a variable for each 'substitutes for'.
-        test do |variables|
-          substitutes_for.each do |scraper|
-            variables[scraper.title.to_sym] = Mustache.render(value, variables)
-          end
-          variables
-        end
       end
       
       class Data
@@ -329,13 +305,6 @@ module SimpleScraper
         
         has n, :defaults, :through => DataMapper::Resource
         has n, :scrapers, :through => DataMapper::Resource
-        
-        # Run defaults first, then scrapers.
-        test do |variables|
-          defaults.each { |default| default.test variables }
-          scrapers.each { |scraper| scraper.test variables }
-          variables
-        end
       end
       
       class Scraper
@@ -350,26 +319,12 @@ module SimpleScraper
         
         has n, :web_pages,                  :through => DataMapper::Resource
         has n, :source_scrapers, 'Scraper', :through => DataMapper::Resource
-
-        test do |variables|
-          pattern = Regexp.new(Mustache.render(regex, variables))
-          (web_pages + source_scrapers).each do |source|
-            source.test variables
-            source_string = variables[source.title.to_sym]
-            variables[title.to_sym] = match_number.nil? ? pattern.match(source_string).to_a[match_number] : pattern.match(source_string).to_a
-          end
-          variables
-        end
       end
       
       class Regex
         include Resource
         
         property :regex, String, :default => ''
-
-        test do |variables|
-          variables[title.to_sym] = Mustache.render(regex, variables)
-        end
       end
       
       class WebPage
@@ -384,23 +339,6 @@ module SimpleScraper
         has n, :posts,          :through => DataMapper::Resource
         has n, :headers,        :through => DataMapper::Resource
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
-        
-        # TODO think about sessions
-        test do |variables|
-          urls.each do |url|
-            uri = URI.parse(Mustache.render(url, variables))
-            http = Net::HTTP.new(uri.host, uri.port)
-            
-            if posts.length == 0
-              #Net::HTTP::get_response(uri)
-              request = Net::HTTP::Get.new(uri.request_uri)
-              #request.
-            else
-              
-              Net::HTTP::post_form(uri
-            end
-          end
-        end
       end
       
       class Url
@@ -410,10 +348,6 @@ module SimpleScraper
         do_not_recurse :web_pages
         
         property :value, DataMapper::Property::URI
-        
-        test do |variables|
-          Mustache.render(value, variables)
-        end
       end
         
       class Post
@@ -424,10 +358,6 @@ module SimpleScraper
         
         property :name,  String
         property :value, String
-
-        test do |variables|
-          Mustache.render(value, variables)
-        end
       end
 
       class Header
@@ -438,10 +368,6 @@ module SimpleScraper
 
         property :name,  String
         property :value, String
-
-        test do |variables|
-          Mustache.render(value, variables)
-        end
       end
       
       class Cookie
@@ -454,10 +380,6 @@ module SimpleScraper
 
         property :name,  String
         property :value, String
-
-        test do |variables|
-          Mustache.render(value, variables)
-        end
       end
     end
   end

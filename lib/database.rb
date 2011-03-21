@@ -1,5 +1,5 @@
 ###
-#   SimpleScraper Back 0.0.1
+#   MicroScraper Server
 #
 #   Copyright 2010, AUTHORS.txt
 #   Licensed under the MIT license.
@@ -9,11 +9,11 @@
 
 require 'lib/schema'
 
-module SimpleScraper
+module MicroScraper
   class Database
     def initialize(options = {})
       @settings = {
-        :file => '/db/simplescraper.db',
+        :file => '/db/microscraper.db',
         :directory => '/'
       }.merge(options)
       

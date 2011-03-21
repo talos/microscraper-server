@@ -1,7 +1,7 @@
 require 'json'
 
-module SimpleScraper
-  class Application
+module MicroScraper
+  class Server
     module Views
       class Model < Layout
         MAX_RESOURCES = 100

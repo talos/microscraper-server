@@ -1,6 +1,6 @@
 /**
 *
-* JavaScript for SimpleScraper.
+* JavaScript for MicroScraper.
 *
 **/
 

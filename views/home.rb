@@ -1,5 +1,5 @@
-module SimpleScraper
-  class Application
+module MicroScraper
+  class Server
     module Views
       class Home < Layout
         # User can always edit their own home.

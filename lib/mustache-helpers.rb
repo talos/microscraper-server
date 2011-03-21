@@ -4,7 +4,7 @@ require 'rubygems'
 require 'mustache'
 
 class Mustache
-  module SimpleScraper
+  module MicroScraper
     module Template
       private
       def process_tokens *tokens

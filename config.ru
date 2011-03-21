@@ -1,3 +1,3 @@
-require 'simplescraper'
+require 'lib/server'
 
-run SimpleScraper::Application.new
+run MicroScraper::Server.new

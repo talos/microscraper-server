@@ -1,22 +1,20 @@
 ###
-#   SimpleScraper Back 0.0.1
+#   MicroScraper Server
 #
 #   Copyright 2010, AUTHORS.txt
 #   Licensed under the MIT license.
 #
-#   SimpleScraper.rb : Execute this file to start.
 ###
 
 require 'rubygems'
 require 'sinatra/base'
 require 'mustache/sinatra'
 require 'json'
-require 'lib/scraper'
 require 'lib/database'
 require 'lib/rpx'
 
-module SimpleScraper
-  class Application < Sinatra::Base
+module MicroScraper
+  class Server < Sinatra::Base
     register Mustache::Sinatra
     require 'views/layout'
     
@@ -30,7 +28,7 @@ module SimpleScraper
       #set :show_exceptions, false
       set :sessions, true
       set :static, true
-      set :public, file_path + '/public'
+      set :public, file_path + '/../public'
       
       set :database, db
       set :users, db.user_model
@@ -45,7 +43,7 @@ module SimpleScraper
                  'jquery-ui-1.8.10.custom.min.js',
                  'jquery-form.js',
                  'jquery.cookie.js',
-                 'simplescraper.js'
+                 'microscraper.js'
                 ]
       set :javascripts, local_js.collect { |file| "#{js_dir}/#{file}" }
 
@@ -53,7 +51,7 @@ module SimpleScraper
       
       css_dir = '/css'
       local_css = [
-                   'simplescraper.css'
+                   'microscraper.css'
                   ]
       set :css_dir, css_dir
       set :stylesheets, local_css.collect { |file| "#{css_dir}/#{file}" }
@@ -61,8 +59,8 @@ module SimpleScraper
       set :session_id, :user_id
       set :authentication => RPX::Authentication.new(:api_key => '344cef0cc21bc9ff3b406a7b2c2a2dffc79d39dc')
       set :mustache, {
-        :views     => file_path + '/views/',
-        :templates => file_path + '/templates/'
+        :views     => file_path + '/../views/',
+        :templates => file_path + '/../templates/'
       }
     end
 
