@@ -266,17 +266,22 @@ module MicroScraper
             
             dest = settings[:into]
             
-            attributes_for_export = Hash[mutable_attributes].delete(:description).delete(:title)
+            attributes_for_export = Hash[mutable_attributes]
+            puts attributes_for_export.inspect
+            attributes_for_export.delete(:description)
+            attributes_for_export.delete(:title)
+            
             associations_for_export = Hash[model.many_to_many_recursive_relationships.collect do |name, relationship|
-                   [
-                    name, send(name).collect do |resource|
-                      ## Add related objects into the destination object.
-                      resource.export(:into => dest, :recurse => settings[:recurse])
-                      resource.full_name
-                    end
-                   ]
-                 end].delete('editors')
-            obj = attributes_for_export(options).merge(associations_for_export)
+                                             [
+                                              name, send(name).collect do |resource|
+                                                ## Add related objects into the destination object.
+                                                resource.export(:into => dest, :recurse => settings[:recurse])
+                                                resource.full_name
+                                              end
+                                             ]
+                                           end]
+            associations_for_export.delete('editors')
+            obj = attributes_for_export.merge(associations_for_export)
 
             dest[model.raw_name] = {} if dest[model.raw_name].nil?
             dest[model.raw_name][full_name] = obj

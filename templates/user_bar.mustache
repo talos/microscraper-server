@@ -3,8 +3,10 @@
     <span class="float-left">You are logged in as {{full_name}}.</span>
     &nbsp;
     <span class="float-right">
-      <span><a href="{{home_location}}">Home</a></span>
-      <span><a href="{{logout_location}}">Log out</a></span>
+      {{#options}}
+        <span><a href="{{home_location}}">Home</a></span>
+        <span><a href="{{logout_location}}">Log out</a></span>
+      {{/options}}
     </span>
   </div>
 {{/user}}
