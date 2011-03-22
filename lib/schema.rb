@@ -48,11 +48,10 @@ module MicroScraper
         has n, :datas,      :child_key => [ :creator_id ]
         has n, :web_pages,  :child_key => [ :creator_id ]
         
-        #has n, :urls,    :child_key => [ :creator_id ]
         has n, :posts,   :child_key => [ :creator_id ]
         has n, :headers, :child_key => [ :creator_id ]
         has n, :cookies, 'Cookie',  :child_key => [ :creator_id ]
-        has n, :regexes, :child_key => [ :creator_id ]
+        has n, :regexps, :child_key => [ :creator_id ]
         
         # Only the user can modify his/her own resource.
         def editable_by? (user)
@@ -297,6 +296,7 @@ module MicroScraper
         do_not_recurse :datas
         
         has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
+        do_not_recurse :substitutes_for
         property :value, String
       end
       
@@ -313,7 +313,7 @@ module MicroScraper
         has n, :datas, :through => DataMapper::Resource
         do_not_recurse :datas
         
-        property :regex,        String,  :default => ''
+        property :regexp,        String,  :default => ''
         property :match_number, Integer,                     :required => false
         property :publish,      Boolean, :default => false,  :required => true
         
@@ -321,10 +321,10 @@ module MicroScraper
         has n, :source_scrapers, 'Scraper', :through => DataMapper::Resource
       end
       
-      class Regex
+      class Regexp
         include Resource
         
-        property :regex, String, :default => ''
+        property :regexp, String, :default => ''
       end
       
       class WebPage
@@ -333,24 +333,14 @@ module MicroScraper
         has n, :scrapers, :through => DataMapper::Resource #, :recurse => false
         do_not_recurse :scrapers
         
-        has n, :terminates, 'Regex', String
+        has n, :terminates, 'Regexp', String
         
-        #has n, :urls,           :through => DataMapper::Resource
-        property :url, String, :default ''
+        property :url, String,  :default => ''
         has n, :posts,          :through => DataMapper::Resource
         has n, :headers,        :through => DataMapper::Resource
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
       end
       
-      # class Url
-      #   include Resource
-        
-      #   has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
-      #   do_not_recurse :web_pages
-        
-      #   property :value, DataMapper::Property::URI
-      # end
-        
       class Post
         include Resource
 
