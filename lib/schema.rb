@@ -301,7 +301,6 @@ module MicroScraper
         do_not_recurse :datas
         
         has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
-        do_not_recurse :substitutes_for
         property :value, String
       end
       
