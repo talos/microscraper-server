@@ -141,7 +141,7 @@ module MicroScraper
             def self.many_to_many_recursive_relationships
               many_to_many_relationships.select do |name, relationship|
                 if @do_not_recurse
-                  @do_not_recurse.include? name.to_sym ? false : true
+                  !@do_not_recurse.include?(name.to_sym)
                 else
                   true
                 end
@@ -267,7 +267,6 @@ module MicroScraper
             dest = settings[:into]
             
             attributes_for_export = Hash[mutable_attributes]
-            puts attributes_for_export.inspect
             attributes_for_export.delete(:description)
             attributes_for_export.delete(:title)
             
