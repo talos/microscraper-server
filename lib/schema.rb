@@ -137,25 +137,25 @@ module MicroScraper
               relationships.select { |name, relationship| relationship.class == DataMapper::Associations::ManyToMany::Relationship }
             end
             
-            # TODO not working with web_page
-            def self.many_to_many_recursive_relationships
+            def self.traversable_relationships
               many_to_many_relationships.select do |name, relationship|
-                if @do_not_recurse
-                  !@do_not_recurse.include?(name.to_sym)
-                else
-                  true
-                end
+                @traverse.to_a.include?(name.to_sym)
               end
             end
             
-            def self.do_not_recurse (*relationships)
-              @do_not_recurse = [] if @do_not_recurse.nil?
-              @do_not_recurse.push(*relationships)
+            def self.traverse (*relationships)
+              @traverse = @traverse.to_a.push(*relationships)
             end
-          end
-          
-          def do_not_recurse
-            @do_not_recurse
+            
+            def self.exportable_relationships
+              many_to_many_relationships.select do |name, relationship|
+                @export.to_a.include?(name.to_sym)
+              end
+            end
+
+            def self.export (*relationships)
+              @export = @export.to_a.push(*relationships)
+            end
           end
           
           def validate_title
@@ -229,7 +229,7 @@ module MicroScraper
           # Determine what values could possibly be fed in for testing.
           def variables
             variables = []
-            model.many_to_many_recursive_relationships.each do |name, relationship|
+            model.traversable_relationships.each do |name, relationship|
               send(name).each do |related_resource|
                 variables.push(*related_resource.variables)
               end
@@ -260,35 +260,34 @@ module MicroScraper
           
           def export (options = {})
             settings = {
-              :into => {},
-              :recurse => false
+              :into => {}
             }.merge(options)
             
             dest = settings[:into]
             
-            attributes_for_export = Hash[mutable_attributes]
-            attributes_for_export.delete(:description)
-            attributes_for_export.delete(:title)
+            attributes = Hash[mutable_attributes]
+            attributes.delete(:description)
+            attributes.delete(:title)
             
-            associations_for_export = Hash[model.many_to_many_recursive_relationships.collect do |name, relationship|
-                                             [
-                                              name, send(name).collect do |resource|
-                                                ## Add related objects into the destination object.
-                                                resource.export(:into => dest, :recurse => settings[:recurse])
-                                                resource.full_name
-                                              end
-                                             ]
-                                           end]
-            associations_for_export.delete('editors')
-            obj = attributes_for_export.merge(associations_for_export)
+            model.traversable_relationships.each do |name, relationship|
+              send(name).each do |resource|
+                resource.export(:into => dest)
+              end
+            end
 
+            associations = Hash[model.exportable_relationships.collect do |name, relationship|
+                                  [name, send(name).collect { |resource| resource.full_name } ]
+                                end]
+            export_obj = attributes.merge(associations)
+            
+            # Place the resource into a hash with its model-mates
             dest[model.raw_name] = {} if dest[model.raw_name].nil?
-            dest[model.raw_name][full_name] = obj
+            dest[model.raw_name][full_name] = export_obj
             dest
           end
 
           def to_json
-            export(:recurse => true).to_json
+            export.to_json
           end
         end
       end
@@ -297,9 +296,11 @@ module MicroScraper
         include Resource
         
         has n, :datas, :through => DataMapper::Resource
-        do_not_recurse :datas
         
         has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
+        traverse :substitutes_for
+        export :substitutes_for
+        
         property :value, String
       end
       
@@ -308,20 +309,40 @@ module MicroScraper
         
         has n, :defaults, :through => DataMapper::Resource
         has n, :scrapers, :through => DataMapper::Resource
+
+        traverse :defaults, :scrapers
       end
       
       class Scraper
         include Resource
         
         has n, :datas, :through => DataMapper::Resource
-        do_not_recurse :datas
         
         property :regexp,        String,  :default => ''
         property :match_number, Integer,                     :required => false
         property :publish,      Boolean, :default => false,  :required => true
         
         has n, :web_pages,                  :through => DataMapper::Resource
-        has n, :source_scrapers, 'Scraper', :through => DataMapper::Resource
+        
+        has n, :links_to_source_scrapers, 'ScraperLink', :child_key => [:target_id]
+        has n, :links_to_target_scrapers, 'ScraperLink', :child_key => [:source_id]
+        
+        has n, :source_scrapers, 'Scraper', :through => :links_to_source_scrapers, :via => :source
+        has n, :target_scrapers, 'Scraper', :through => :links_to_target_scrapers, :via => :target
+        
+        traverse :source_scrapers, :web_pages
+        export :target_scrapers
+        #has n, :source_scrapers, 'Scraper', :through => DataMapper::Resource
+      end
+
+      class ScraperLink
+        include DataMapper::Resource
+        
+        property :source_id, Integer, :key => true, :min => 1
+        property :target_id, Integer, :key => true, :min => 1
+
+        belongs_to :source, 'Scraper', :key => true
+        belongs_to :target, 'Scraper', :key => true
       end
       
       class Regexp
@@ -333,8 +354,7 @@ module MicroScraper
       class WebPage
         include Resource
         
-        has n, :scrapers, :through => DataMapper::Resource #, :recurse => false
-        do_not_recurse :scrapers
+        has n, :scrapers, :through => DataMapper::Resource
         
         has n, :terminates, 'Regexp', String
         
@@ -342,13 +362,15 @@ module MicroScraper
         has n, :posts,          :through => DataMapper::Resource
         has n, :headers,        :through => DataMapper::Resource
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
+        
+        traverse :terminates, :posts, :headers, :cookies
+        export :termiantes, :posts, :headers, :cookies
       end
       
       class Post
         include Resource
 
-        has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
-        do_not_recurse :web_pages
+        has n, :web_pages, :through => DataMapper::Resource
         
         property :name,  String
         property :value, String
@@ -357,8 +379,7 @@ module MicroScraper
       class Header
         include Resource
 
-        has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
-        do_not_recurse :web_pages
+        has n, :web_pages, :through => DataMapper::Resource
 
         property :name,  String
         property :value, String
@@ -367,11 +388,10 @@ module MicroScraper
       class Cookie
         include Resource
         
-        storage_names[:default] = 'cookie_headers'
+        storage_names[:default] = 'micro_scraper_cookie_headers'
         
-        has n, :web_pages, :through => DataMapper::Resource #, :recurse => false
-        do_not_recurse :web_pages
-
+        has n, :web_pages, :through => DataMapper::Resource
+        
         property :name,  String
         property :value, String
       end

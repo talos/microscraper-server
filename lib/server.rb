@@ -276,7 +276,7 @@ module MicroScraper
           creator = @db.get_model(:user).first(:title => split_title[0]) or not_found
           @related_resource = @related_model.first_or_new(:creator => creator, :title => split_title[1])
         else
-          error 'You may only use one slash, to separate the creator from the title of the resource.'
+          error 'You may only use one slash to separate the creator from the title of the resource.'
         end
       end
 
@@ -296,16 +296,17 @@ module MicroScraper
       @related_resource ? redirect(@related_resource.location) : not_found
     end
     
+    # COMMENTED this is now handled by "Creates a new link..."
     # Relate two known resources, possibly creating or replacing the second.
-    put options.database.directory + ':model/:creator_title/:resource_title/:relationship/:related_id' do
-      if @related_resource.nil?
-        @related_resource = @related_model.get(params[:related_id]) or not_found
-      end
-      @relationship << @related_resource
-      @resource.save or resource_error @resource, @related_resource
-      mustache :created # @related_resource.location
-    end
-
+    # put options.database.directory + ':model/:creator_title/:resource_title/:relationship/:related_id' do
+    #   if @related_resource.nil?
+    #     @related_resource = @related_model.get(params[:related_id]) or not_found
+    #   end
+    #   @relationship << @related_resource
+    #   @resource.save or resource_error @resource, @related_resource
+    #   mustache :created # @related_resource.location
+    # end
+    
     # Delete a link.
     delete options.database.directory + ':model/:creator_title/:resource_title/:relationship/:related_id' do
       not_found unless @related_resource
