@@ -17,24 +17,12 @@ require 'json'
 require 'net/http'
 require 'uri'
 require 'mustache'
+require 'lib/dm-helpers'
 require 'lib/mustache-helpers'
 
 module MicroScraper
   class Database
     module Schema
-      module DataMapper::Model
-        def raw_name
-          DataMapper::Inflector.underscore(name.split('::').last)
-        end
-
-        # TODO THIS IS ASSUMING EVERYTHING LIVES IN THE '/' DIRECTORY
-        def location
-          #'/editor/' + self.raw_name + '/'
-          # @settings[:directory] + self.raw_name + '/'
-          '/' + self.raw_name + '/'
-        end
-      end
-      
       class User
         include DataMapper::Resource
         
@@ -102,6 +90,7 @@ module MicroScraper
             property :updated_at, DataMapper::Property::DateTime, :writer => :private
 
             property :title, DataMapper::Property::String, :required => true, :unique_index => :creator_name_deleted
+            
             # Make sure names don't contain a slash.
             validates_with_method :title, :validate_title
 
@@ -297,10 +286,14 @@ module MicroScraper
         
         has n, :datas, :through => DataMapper::Resource
         
-        has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
-        traverse :substitutes_for
-        export :substitutes_for
+        # has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
+        # traverse :substitutes_for
+        # export :substitutes_for
+        has n, :scrapers, :through => DataMapper::Resource
         
+        traverse :scrapers
+        export :scrapers
+
         property :value, String
       end
       
@@ -311,6 +304,7 @@ module MicroScraper
         has n, :scrapers, :through => DataMapper::Resource
 
         traverse :defaults, :scrapers
+        export :defaults, :scrapers
       end
       
       class Scraper
@@ -320,9 +314,12 @@ module MicroScraper
         
         property :regexp,        String,  :default => ''
         property :match_number, Integer,                     :required => false
-        property :publish,      Boolean, :default => false,  :required => true
+        property :publish,      Boolean,  :default => false,  :required => true
         
         has n, :web_pages,                  :through => DataMapper::Resource
+        
+        #has n, :substituted_by, 'Default', :through => DataMapper::Resource
+        has n, :defaults, :through => DataMapper::Resource
         
         has n, :links_to_source_scrapers, 'ScraperLink', :child_key => [:target_id]
         has n, :links_to_target_scrapers, 'ScraperLink', :child_key => [:source_id]
@@ -332,7 +329,6 @@ module MicroScraper
         
         traverse :source_scrapers, :web_pages
         export :target_scrapers
-        #has n, :source_scrapers, 'Scraper', :through => DataMapper::Resource
       end
 
       class ScraperLink
@@ -364,7 +360,7 @@ module MicroScraper
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
         
         traverse :terminates, :posts, :headers, :cookies
-        export :termiantes, :posts, :headers, :cookies
+        export :terminates, :posts, :headers, :cookies, :scrapers
       end
       
       class Post
