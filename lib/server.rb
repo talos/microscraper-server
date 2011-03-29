@@ -129,6 +129,7 @@ module MicroScraper
         options.stylesheets << "#{options.css_dir}/#{theme}/jquery-ui-1.8.10.custom.css"
         @html_format = true
       when :json
+        content_type 'application/json', :charset => 'utf-8'
         @json_format = true
       end
     end
