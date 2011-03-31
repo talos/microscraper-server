@@ -346,7 +346,7 @@ module MicroScraper
         
         has n, :scrapers, :through => DataMapper::Resource
         
-        has n, :terminates, 'Regexp', String
+        has n, :terminates, 'Regexp', :through => DataMapper::Resource
         
         property :url, String,  :default => ''
         has n, :posts,          :through => DataMapper::Resource
