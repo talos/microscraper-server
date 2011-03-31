@@ -341,12 +341,6 @@ module MicroScraper
         belongs_to :target, 'Scraper', :key => true
       end
       
-      class Regexp
-        include Resource
-        
-        property :regexp, String, :default => ''
-      end
-      
       class WebPage
         include Resource
         
@@ -361,6 +355,14 @@ module MicroScraper
         
         traverse :terminates, :posts, :headers, :cookies
         export :terminates, :posts, :headers, :cookies
+      end
+
+      class Regexp
+        include Resource
+        
+        has n, :web_pages, :through => DataMapper::Resource
+        
+        property :regexp, String, :default => ''
       end
       
       class Post
