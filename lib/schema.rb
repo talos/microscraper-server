@@ -328,7 +328,7 @@ module MicroScraper
         has n, :target_scrapers, 'Scraper', :through => :links_to_target_scrapers, :via => :target
         
         traverse :source_scrapers, :web_pages
-        export :target_scrapers
+        export :source_scrapers, :web_pages
       end
 
       class ScraperLink
@@ -360,7 +360,7 @@ module MicroScraper
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
         
         traverse :terminates, :posts, :headers, :cookies
-        export :terminates, :posts, :headers, :cookies, :scrapers
+        export :terminates, :posts, :headers, :cookies
       end
       
       class Post
