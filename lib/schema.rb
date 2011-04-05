@@ -110,7 +110,18 @@ module MicroScraper
                 send(name).intermediaries.destroy
               end
             end
-
+            
+            # Check mustacheable attributes for mustacheability
+            before :valid? do
+              model.mustacheable_attributes.each do |attr|
+                begin
+                  Mustache.templateify(send(attr)).send(:tokens)
+                rescue Mustache::Parser::SyntaxError
+                  throw :halt
+                end
+              end
+            end
+            
             # Keep track of our last editor.
             after :save do
               if @last_editor
@@ -144,6 +155,14 @@ module MicroScraper
 
             def self.export (*relationships)
               @export = @export.to_a.push(*relationships)
+            end
+            
+            def self.mustacheable_attributes
+              @mustacheable_attributes.to_a
+            end
+
+            def self.mustacheable (*attributes)
+              @mustacheable_attributes = @mustacheable_attributes.to_a.push(*attributes)
             end
           end
           
@@ -185,7 +204,7 @@ module MicroScraper
             new_attributes.delete_if do |name, value|
               if not attributes.keys.include? name.downcase.to_sym # Delete attributes not specified in the model
                 true
-              elsif private_methods.include? name + '=' or value == ''  # Remove private attributes and blank strings.
+              elsif private_methods.include? name + '=' # Remove private attributes.
                 true
               end
             end
@@ -285,16 +304,13 @@ module MicroScraper
         include Resource
         
         has n, :datas, :through => DataMapper::Resource
-        
-        # has n, :substitutes_for, 'Scraper', :through => DataMapper::Resource
-        # traverse :substitutes_for
-        # export :substitutes_for
         has n, :scrapers, :through => DataMapper::Resource
         
         traverse :scrapers
         export :scrapers
 
         property :value, String
+        mustacheable :value
       end
       
       class Data
@@ -313,13 +329,10 @@ module MicroScraper
         has n, :datas, :through => DataMapper::Resource
         
         property :regexp,        String,  :default => ''
-        property :match_number, Integer,                     :required => false
-        property :publish,      Boolean,  :default => false,  :required => true
+        property :match_number, Integer,  :required => false
         
-        has n, :web_pages,                  :through => DataMapper::Resource
-        
-        #has n, :substituted_by, 'Default', :through => DataMapper::Resource
-        has n, :defaults, :through => DataMapper::Resource
+        has n, :web_pages, :through => DataMapper::Resource
+        has n, :defaults,  :through => DataMapper::Resource
         
         has n, :links_to_source_scrapers, 'ScraperLink', :child_key => [:target_id]
         has n, :links_to_target_scrapers, 'ScraperLink', :child_key => [:source_id]
@@ -329,6 +342,7 @@ module MicroScraper
         
         traverse :source_scrapers, :web_pages
         export :source_scrapers, :web_pages
+        mustacheable :regexp
       end
 
       class ScraperLink
@@ -355,6 +369,7 @@ module MicroScraper
         
         traverse :terminates, :posts, :headers, :cookies
         export :terminates, :posts, :headers, :cookies
+        mustacheable :url
       end
 
       class Regexp
@@ -363,6 +378,8 @@ module MicroScraper
         has n, :web_pages, :through => DataMapper::Resource
         
         property :regexp, String, :default => ''
+
+        mustacheable :regexp
       end
       
       class Post
@@ -372,6 +389,8 @@ module MicroScraper
         
         property :name,  String
         property :value, String
+
+        mustacheable :name, :value
       end
 
       class Header
@@ -381,6 +400,8 @@ module MicroScraper
 
         property :name,  String
         property :value, String
+
+        mustacheable :name, :value
       end
       
       class Cookie
@@ -392,6 +413,8 @@ module MicroScraper
         
         property :name,  String
         property :value, String
+
+        mustacheable :name, :value
       end
     end
   end
