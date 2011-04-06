@@ -3,10 +3,10 @@
     font-size: .8em !important;
 }
 .ui-widget .ui-widget {
-    font-size: .8em !important;
+    font-size: 1.0em !important;
 }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
-    font-size: .8em !important;
+    font-size: 1.0em !important;
 }
 
 /* Default margins & padding. */
