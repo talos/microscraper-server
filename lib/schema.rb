@@ -243,7 +243,11 @@ module MicroScraper
               end
             end
             attributes.collect do |attribute|
-              variables.push(*Mustache::MicroScraper.extract_variables(attribute))
+              begin
+                variables.push(*Mustache::MicroScraper.extract_variables(attribute))
+              rescue Mustache::Parser::SyntaxError
+                # Ignore malformed attributes
+              end
             end
             variables
           end
