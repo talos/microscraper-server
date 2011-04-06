@@ -10,8 +10,6 @@
 require 'lib/schema'
 
 module MicroScraper
-  # Extend default String length from 50 to 512
-  DataMapper::Property::String.length(512)
   #DataMapper::Model.raise_on_save_failure = true
   class Database
     def initialize(options = {})
