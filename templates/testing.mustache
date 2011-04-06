@@ -1,0 +1,20 @@
+<div class="test ui-widget-content">
+  <div class="code">
+    JSON (<a href="{{location}}?format=json">link</a>):<br>
+    <code class="json">
+      {{to_json}}
+    </code>
+  </div>
+  <ul class="variables">
+    <form method="get" action="{{location}}">
+      {{#variables}}
+        <li class="variable">
+          <label for="{{to_s}}">{{to_s}}:</label>
+          <textarea name="{{to_s}}"></textarea>
+        </li>
+      {{/variables}}
+      <button type="submit">Test</button>
+    </form>
+  </ul>
+</div>
+
