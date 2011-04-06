@@ -1,0 +1,4 @@
+---
+mustacheable:
+  description:
+    en: This attribute may use a Mustache-style substitution.

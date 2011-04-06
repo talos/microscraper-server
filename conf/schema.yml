@@ -1,0 +1,201 @@
+--- 
+# Descriptions for resources, possible localizations.
+
+# Default Resource
+default: 
+  name:
+    en: Default
+  description: 
+    en: "replaces the execution of specified scrapers with a fixed value."
+  property: 
+    value:
+      name: 
+        en: Value
+      description: 
+        en: "used in lieu of collecting the substituted scrapers."
+      mustacheable: true
+  has:
+    defaults:
+      datas:
+        name:
+          en: Datas
+        description:
+          en: "utilize this default value."
+      scrapers:
+        name:
+          en: "Substituted Scrapers"
+        description:
+          en: "will be replaced with the value of this default instead of running."
+
+# Data Resource
+data:
+  name:
+    en: Data
+  description:
+    en: "is a bundle of scrapers and defaults."
+  property:
+  has:
+    defaults:
+      name:
+        en: "Substitute default values"
+      description:
+        en: "will substitute for certain scrapers when this data is collected."
+    scrapers:
+      name:
+        en: Scrapers
+      description:
+        en: "will collect individual strings of information."
+
+# Scraper Resource
+scraper:
+  name:
+    en: Scraper
+  description:
+    en: "converts a source string, either a web page or the results of another scraper, into one or more new strings."
+  property:
+    regexp:
+      name:
+        en: "Regular Expression"
+      description:
+        en: "matches the substring(s) within the source.  Either the first parenthetical or the entire expression is the output."
+      mustacheable: true
+    match_number:
+      name:
+        en: "Match Number"
+      description:
+        en: "determines which regular expression match to use.  If blank, all are used.  In that case, any scrapers using this scraper as a source will execute once for each match."
+  has:
+    source_scrapers:
+      name:
+        en: "Source Scrapers"
+      description:
+        en: "supply string(s) for this scraper to match against."
+    target_scrapers:
+      name:
+        en: "Target Scrapers"
+      description:
+        en: "work from this scraper's matched strings."
+    web_pages:
+      name:
+        en: "Web Pages"
+      description:
+        en: "supplies a web page for this scraper to match against."
+    defaults:
+      name:
+        en: "Possible Substitute Values"
+      description:
+        en: "would substitute for this scraper if they are loaded within the same Data resource."
+
+# Web Page Resource
+web_page:
+  name:
+    en: "Web Page"
+  description:
+    en: "downloads a string from the specified URL using the specified headers."
+  property:
+    url:
+      name:
+        en: URL
+      description:
+        en: "locates the web page."
+      mustacheable: true
+  has:
+    posts:
+      name:
+        en: "HTTP Post Form Values"
+      description:
+        en: 
+    headers:
+      name:
+        en: "HTTP Headers"
+      description:
+        en: "simulates arbitrary HTTP headers."
+    cookies:
+      name:
+        en: "Cookies"
+      description:
+        en: "simulates cookies."
+    terminates:
+      name:
+        en: "Terminate Loading"
+      description:
+        en: "will cause the page to stop loading when it matches any of these regular expressions."
+    scrapers:
+      name:
+        en: "Target Scrapers"
+      description:
+        en: "use this web page as a source."
+
+# Regexp Resource
+regexp:
+  name:
+    en: "Regular Expression"
+  description:
+    en: "matches for a string."
+  property:
+    regexp:
+      name:
+        en: "Regular expression"
+      description:
+        en: "its value"
+      mustacheable: true
+  has:
+    web_pages:
+      name:
+        en: "Web Pages"
+      description:
+        en: "causes these page to terminate loading upon match."
+
+# Post Resource
+post:
+  name:
+    en: "HTTP Post Form Value"
+  description:
+    en: "simulates one input from an HTTP Post form submission."
+  property:
+    name:
+      name:
+        en: Name
+      description:
+        en: "is the name of the input's key:value pair."
+    value:
+      name:
+        en: Value
+      description:
+        en: "is the value of the input's key:value pair."
+
+# Header Resource
+header:
+  name:
+    en: "HTTP Header"
+  description:
+    en: "simulates an HTTP header."
+  property:
+    name:
+      name:
+        en: Name
+      description:
+        en: "is the name of the header's key:value pair."
+    value:
+      name:
+        en: Value
+      description:
+        en: "is the value of the header's key:value pair."
+
+# Cookie Resource
+header:
+  name:
+    en: "Cookie"
+  description:
+    en: "simulates an HTTP cookie."
+  property:
+    name:
+      name:
+        en: Name
+      description:
+        en: "is the name of the cookie's key:value pair."
+    value:
+      name:
+        en: Value
+      description:
+        en: "is the value of the cookie's key:value pair."
