@@ -1,3 +1,14 @@
+/* Reduce Themeroller's text size. */
+.ui-widget {
+    font-size: .8em !important;
+}
+.ui-widget .ui-widget {
+    font-size: .8em !important;
+}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+    font-size: .8em !important;
+}
+
 /* Default margins & padding. */
 div {
     padding: .4em;
