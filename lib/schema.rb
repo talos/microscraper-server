@@ -20,6 +20,11 @@ require 'mustache'
 require 'lib/dm-helpers'
 require 'lib/mustache-helpers'
 
+# Extend default String length from 50 to 512
+DataMapper::Property::String.length(512)
+# Fix bug that crops up from prior line.
+DataMapper::Property::String.length(65535)
+
 module MicroScraper
   class Database
     module Schema
@@ -332,7 +337,7 @@ module MicroScraper
         
         has n, :datas, :through => DataMapper::Resource
         
-        property :regexp,        String,  :default => ''
+        property :regexp,          Text,  :default => ''
         property :match_number, Integer,  :required => false
         
         has n, :web_pages, :through => DataMapper::Resource
