@@ -14,11 +14,11 @@
       <div class="tabs">
         <ul>
           <li><a href="#attributes">Attributes</a></li>
-          <li><a href="#associations">Associations</a></li>
           <li><a href="#test">Test</a></li>
           {{#can_edit}}
             <li><a href="#delete">Delete</a></li>
           {{/can_edit}}
+          {{> associations_tabs}}
         </ul>
         <div id="attributes" class="ui-widget ui-widget-content">
           <ul class="immutable">
@@ -53,6 +53,12 @@
         {{> associations}}
         {{! Test to see whether the resource 'works' }}
         <div id="test">
+          <div class="code">
+            JSON (<a href="{{location}}?format=json">link</a>):<br>
+            <code class="json">
+              {{to_json}}
+            </code>
+          </div>
           <ul class="variables">
             <form method="get" action="{{location}}">
               {{#variables}}
@@ -73,8 +79,9 @@
         {{! Delete the resource. }}
         <div id="delete">
           {{#can_edit}}
+            Are you sure?  This will also delete all this resource's links to other resources!
             <form method="delete" action="{{location}}">
-              <button type="submit">Delete</button>
+              <button type="submit">Yes, Delete!</button>
             </form>
           {{/can_edit}}
         </div>
