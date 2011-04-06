@@ -2,48 +2,6 @@ require 'rubygems'
 require 'dm-core'
 
 module DataMapper
-  # module MicroScraper
-  #   class Options
-  #     OPTIONS = [:description, :traverse, :export]
-  #     OPTIONS.each { |option| attr_reader option }
-  #     def initialize(options = {})
-  #       if options[:micro_scraper]
-  #         options[:micro_scraper].each do |option, value|
-  #           instance_variable_set('@' + option.to_s, value) if OPTIONS.include?(option.to_sym)
-  #         end
-  #       end
-  #     end
-  #   end
-  # end
-
-  # module Associations
-  #   class Relationship
-  #     include DataMapper::Hook
-      
-  #     OPTIONS << :micro_scraper
-  #     attr_reader :micro_scraper
-      
-  #     send :public, :initialize
-  #     before :initialize do |name, child_model, parent_model, options|
-  #       @micro_scraper = MicroScraper::Options.new(options)
-  #     end
-  #     send :private, :initialize
-  #   end
-  # end
-
-  # class Property
-  #   include DataMapper::Hook
-    
-  #   OPTIONS << :micro_scraper
-  #   attr_reader :micro_scraper
-    
-  #   send :public, :initialize
-  #   before :initialize do |model, name, options, *args|
-  #     @micro_scraper = MicroScraper::Options.new(options)
-  #   end
-  #   send :private, :initialize
-  # end
-  
   module Model
     def raw_name
       DataMapper::Inflector.underscore(name.split('::').last)
@@ -56,4 +14,66 @@ module DataMapper
       '/' + self.raw_name + '/'
     end
   end
+
+  module Resource
+    def relationships
+      one_to_manys = model.relationships.select do |name, relationship|
+        relationship.class == DataMapper::Associations::OneToMany::Relationship
+      end
+
+      one_to_manys.collect do |name, relationship|
+        {
+          :relationship => relationship,
+          :links => send(name).collect do |resource|
+            
+          end
+        }
+      end
+    end
+    
+    def is_resource?
+      respond_to? :full_name
+    end
+
+    def is_link?
+      key.length == 2 and model.relationships.size == 2
+    end
+
+    # TODO LINK SPECIFIC
+    def source
+      send(model.relationships.to_a[0][0])
+    end
+
+    def target
+      send(model.relationships.to_a[1][0])
+    end
+
+    def location
+      # this is a resource
+      if is_resource?
+        model.location + full_name
+        # this is a link
+      elsif is_link?
+        # Track down the many-to-many relationship that uses this link.
+        relationship = source.model.relationships.find do |name, relationship|
+          if relationship.respond_to? :through
+            relationship.through.target_model == model
+          end
+        end
+        # The location of one of the linked resources, plus the key of the second.
+        if relationship
+          source.location + '/' + relationship[0].to_s + '/' + target.key.to_s
+        end
+      end
+    end
+
+    def follow(from_resource)
+      if is_resource?
+        return self
+      elsif is_link?
+        
+      end
+    end
+  end
 end
+# require 'lib/database'; db = MicroScraper::Database.new; user = db.user_model.first; scraper = user.scrapers.first; scraper.web_pages.intermediaries.first.location

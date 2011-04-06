@@ -297,17 +297,6 @@ module MicroScraper
       @related_resource ? redirect(@related_resource.location) : not_found
     end
     
-    # COMMENTED this is now handled by "Creates a new link..."
-    # Relate two known resources, possibly creating or replacing the second.
-    # put options.database.directory + ':model/:creator_title/:resource_title/:relationship/:related_id' do
-    #   if @related_resource.nil?
-    #     @related_resource = @related_model.get(params[:related_id]) or not_found
-    #   end
-    #   @relationship << @related_resource
-    #   @resource.save or resource_error @resource, @related_resource
-    #   mustache :created # @related_resource.location
-    # end
-    
     # Delete a link.
     delete options.database.directory + ':model/:creator_title/:resource_title/:relationship/:related_id' do
       not_found unless @related_resource

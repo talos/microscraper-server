@@ -30,6 +30,11 @@ li.tag {
     padding: .2em;
 }
 
+/* */
+li {
+    list-style-type: none;
+}
+
 /* Hide immutable attributes. */
 .immutable {
     display: none;

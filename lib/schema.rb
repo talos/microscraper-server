@@ -172,7 +172,7 @@ module MicroScraper
           end
           
           def validate_title
-            if title.index('/')
+            if title.to_s.index('/')
               [ false, 'Title cannot contain a slash.' ]
             else
               true
@@ -269,6 +269,7 @@ module MicroScraper
                   {
                     :full_name => resource.full_name,
                     :location => "#{location}/#{name}/#{resource.attribute_get(:id)}",
+                    :resource => resource
                   }
                 end
               }

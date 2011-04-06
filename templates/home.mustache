@@ -1,18 +1,17 @@
 {{#html_format}}
   {{#user}}
-    <div class="home tabs ui-widget">
-      <ul>
-        {{> associations_tabs}}
-        <li><a href="#settings">Settings</a></li>
-      </ul>
+    <div class="home ui-widget">
+      <div class="ui-widget-header ui-corner-top">
+        {{full_name}}'s resources
+      </div>
       {{> associations}}
       {{#options}}
-      <div id="settings" class="ui-widget-content">
-        <form method="put" action="{{home_location}}">
-          <input name="title" type="text" />
-          <button type="submit">Change Name</button>
-        </form>
-      </div>
+        <div class="settings ui-widget-content">
+          <form method="put" action="{{home_location}}">
+            <input name="title" type="text" />
+            <button type="submit">Change Name</button>
+          </form>
+        </div>
       {{/options}}
     </div>
   {{/user}}
