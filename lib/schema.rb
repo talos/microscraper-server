@@ -347,6 +347,10 @@ module MicroScraper
         traverse :source_scrapers, :web_pages
         export :source_scrapers, :web_pages
         mustacheable :regexp
+
+        before :valid? do 
+          match_number = nil if match_number == ''
+        end
       end
 
       class ScraperLink
