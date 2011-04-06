@@ -1,4 +1,9 @@
 ---
+# Localized messages.
+
+delete_resource_text:
+  en: "Are you sure? This will also delete all other resources' links to this resource."
+delete_resource_button:
+  en: "Yes, delete!"
 mustacheable:
-  description:
-    en: This attribute may use a Mustache-style substitution.
+  en: "This attribute may use a Mustache-style substitution."
