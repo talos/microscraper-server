@@ -57,7 +57,7 @@ module MicroScraper
       set :stylesheets, local_css.collect { |file| "#{css_dir}/#{file}" }
       
       set :applet_dir, '/applets/'
-      set :applet_class, 'MicroScraperApplet.class'
+      set :applet_class, 'net/microscraper/client/applet/MicroScraperApplet.class'
       
       set :session_id, :user_id
       set :authentication => RPX::Authentication.new(:api_key => '344cef0cc21bc9ff3b406a7b2c2a2dffc79d39dc')
