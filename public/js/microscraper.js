@@ -6,7 +6,7 @@
 
 $(document).ready(function() {
     /* Allows for PUT and DELETE from forms, reloads upon success. */
-    $('form').each(function() {
+    $('form.ajax').each(function() {
 	var method = $(this).attr('method');
 	$(this).ajaxForm({
 	    type : method,
@@ -17,6 +17,15 @@ $(document).ready(function() {
 		$.error( responseText );
 	    }
 	});
+    });
+    /* Testing. Intercept test form submission and give it to the applet. */
+    $('form.test').click(function() {
+	var json_location = $(this).attr('action'),
+	defaults = $(this).serializeArray(),
+	results = $('applet').first().scrape(json_location, defaults);
+	
+	console.log(results);
+	return false;
     });
     /* Autofill 'add' inputs, which are used for tagging & resource creation. */
     $('input.add').each(function() {

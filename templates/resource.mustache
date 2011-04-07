@@ -21,7 +21,7 @@
       {{! Delete the resource. }}
       {{#can_edit}}
         <div class="delete ui-widget-content">
-          <form method="delete" action="{{location}}">
+          <form class="ajax" method="delete" action="{{location}}">
             <button type="submit">Delete</button>
           </form>
         </div>
