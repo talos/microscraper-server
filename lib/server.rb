@@ -46,7 +46,7 @@ module MicroScraper
                  'microscraper.js'
                 ]
       set :javascripts, local_js.collect { |file| "#{js_dir}/#{file}" }
-
+      
       set :default_jquery_theme, 'smoothness'
       
       css_dir = '/css'
@@ -55,6 +55,9 @@ module MicroScraper
                   ]
       set :css_dir, css_dir
       set :stylesheets, local_css.collect { |file| "#{css_dir}/#{file}" }
+      
+      set :applet_dir, '/applets/'
+      set :applet_class, 'MicroScraperApplet.class'
       
       set :session_id, :user_id
       set :authentication => RPX::Authentication.new(:api_key => '344cef0cc21bc9ff3b406a7b2c2a2dffc79d39dc')
@@ -126,7 +129,7 @@ module MicroScraper
       case determine_request_type
       when :html
         theme = params[:theme] ? params[:theme] : options.default_jquery_theme
-        options.stylesheets << "#{options.css_dir}/#{theme}/jquery-ui-1.8.10.custom.css"
+        @theme_location = "#{options.css_dir}/#{theme}/jquery-ui-1.8.10.custom.css"
         @html_format = true
       when :json
         content_type 'application/json', :charset => 'utf-8'

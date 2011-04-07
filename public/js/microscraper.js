@@ -19,13 +19,22 @@ $(document).ready(function() {
 	});
     });
     /* Testing. Intercept test form submission and give it to the applet. */
-    $('form.test').click(function() {
-	var json_location = $(this).attr('action'),
-	defaults = $(this).serializeArray(),
-	results = $('applet').first().scrape(json_location, defaults);
-	
-	console.log(results);
-	return false;
+    $('form.test').submit(function(event) {
+	try {
+	    var json_location = $(this).attr('action'),
+	    defaults = $(this).serializeArray();
+	    console.log(defaults);
+	    console.log(json_location);
+	    
+	    //var results = $('applet').get(0).scrape(json_location, defaults);
+	    //var results = $('applet').get(0).scrape(json_location);
+	    
+	    //console.log(results);
+	    return false;
+	} catch(error) {
+	    event.preventDefault();
+	    $.error(error);
+	}
     });
     /* Autofill 'add' inputs, which are used for tagging & resource creation. */
     $('input.add').each(function() {
@@ -52,8 +61,8 @@ $(document).ready(function() {
 	    }
 	});
     });
-    /* Accordion. */
-    $('.accordion').accordion({autoHeight: false});
+    /* Accordion. No longer used.  TODO: remove from UI library. */
+    //$('.accordion').accordion({autoHeight: false});
     /* Button. */
     $('button').button();
     /* Tabs. */

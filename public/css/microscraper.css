@@ -9,6 +9,11 @@
     font-size: 1.0em !important;
 }
 
+/* Hide applet. */
+/*applet {
+    display: none;
+}*/
+
 /* Default margins & padding. */
 div {
     padding: .4em;
