@@ -18,6 +18,7 @@ module MicroScraper
     register Mustache::Sinatra
     require 'views/layout'
     
+    # TODO: move a lot of this to a separate yaml conf file
     configure do
       file_path = File.dirname(__FILE__)
       #db = Database.new( :directory => resource_dir )
@@ -37,14 +38,19 @@ module MicroScraper
       set :login_location, '/login'
       set :registration_location, '/login'
       set :logout_location, '/logout'
+
+      set :img_dir, '/img'
+      set :spinner_img, options.img_dir + '/spinner.gif'
+
       js_dir = '/js'
       local_js = [
-                 'jquery-1.5.1.min.js',
-                 'jquery-ui-1.8.10.custom.min.js',
-                 'jquery-form.js',
-                 'jquery.cookie.js',
-                 'microscraper.js'
-                ]
+                  'jquery-1.5.1.min.js',
+                  'jquery-ui-1.8.10.custom.min.js',
+                  'jquery-form.js',
+                  'jquery.cookie.js',
+                  'jquery.spinner.js',
+                  'microscraper.js'
+                 ]
       set :javascripts, local_js.collect { |file| "#{js_dir}/#{file}" }
       
       set :default_jquery_theme, 'smoothness'
@@ -57,10 +63,8 @@ module MicroScraper
       set :stylesheets, local_css.collect { |file| "#{css_dir}/#{file}" }
       
       set :applet_dir, '/applets/'
-      #set :applet_class, 'net/microscraper/client/applet/MicroScraperApplet.class'
-      set :applet_class, 'net.microscraper.client.applet.MicroScraperApplet'
-      #set :applet_class, 'MicroScraperApplet'
-      set :applet_archive, 'MicroScraperApplet.jar'
+      set :applet_class, 'net.microscraper.client.applet.MicroScraperApplet.class'
+      set :applet_jar, 'MicroScraperApplet.jar'
       
       set :session_id, :user_id
       set :authentication => RPX::Authentication.new(:api_key => '344cef0cc21bc9ff3b406a7b2c2a2dffc79d39dc')
