@@ -58,7 +58,7 @@ module MicroScraper
       
       set :applet_dir, '/applets/'
       #set :applet_class, 'net/microscraper/client/applet/MicroScraperApplet.class'
-      set :applet_class, 'net.microscraper.client.applet.MicroScraperApplet.class'
+      set :applet_class, 'net.microscraper.client.applet.MicroScraperApplet'
       #set :applet_class, 'MicroScraperApplet'
       set :applet_archive, 'MicroScraperApplet.jar'
       
