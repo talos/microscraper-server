@@ -2,6 +2,7 @@
 {{! Pass applet variables to javascript. }}
 <script type="text/javascript">
 $(document).ready(function() {
+
   var microscraper_data = {
     'applet_dir'   : '{{applet_dir}}',
     'applet_class' : '{{applet_class}}',
@@ -9,7 +10,12 @@ $(document).ready(function() {
     'img_dir'      : '{{img_dir}}',
     'spinner_img'  : '{{spinner_img}}'
   };
-  $('body').data('microscraper', microscraper_data);
+  if(!$('body').data('microscraper')) {
+    $('body').data('microscraper', microscraper_data);
+  } else {
+    var data = $('body').data('microscraper');
+    $.extend(data, microscraper_data);
+  }
 });
 </script>
 {{/options}}
