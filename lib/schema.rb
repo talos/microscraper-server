@@ -254,7 +254,7 @@ module MicroScraper
                 # Ignore malformed attributes
               end
             end
-            variables
+            variables.uniq # eliminate duplicate variables
           end
           
           def associations

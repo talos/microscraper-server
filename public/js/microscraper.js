@@ -27,6 +27,7 @@ $(document).ready(function() {
 	    }
 	});
     });
+
     
     /* Testing. Intercept test form submission and give it to the applet. */
     $('form.test').microscraper_applet({
@@ -34,6 +35,9 @@ $(document).ready(function() {
 	archive : data.applet_jar,
 	codebase : data.applet_dir
     });
+
+    /* Disabler. Give certain elements disable/enable functionality. */
+    $('form.test textarea').disabler();
 
     /* Autofill 'add' inputs, which are used for tagging & resource creation. */
     $('input.add').each(function() {

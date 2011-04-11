@@ -5,15 +5,15 @@
       {{to_json}}
     </code>
   </div>
-  <ul class="variables">
-    <form class="test" method="get">
+  <form class="test" method="get">
+    <table class="variables">
       {{#variables}}
-        <li class="variable">
-          <label for="{{to_s}}">{{to_s}}:</label>
-          <textarea name="{{to_s}}"></textarea>
-        </li>
+        <tr>
+          <td><label for="{{to_s}}">{{to_s}}:</label></td>
+          <td><textarea name="{{to_s}}" class="disabler"></textarea></td>
+        </tr>
       {{/variables}}
-    </form>
-  </ul>
+    </table>
+  </form>
 </div>
 
