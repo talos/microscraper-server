@@ -39,8 +39,8 @@ module MicroScraper
       set :registration_location, '/login'
       set :logout_location, '/logout'
 
-      set :img_dir, '/img'
-      set :spinner_img, options.img_dir + '/spinner.gif'
+      # set :img_dir, '/img'
+      # set :spinner_img, options.img_dir + '/spinner.gif'
 
       js_dir = '/js'
       local_js = [
@@ -63,9 +63,9 @@ module MicroScraper
       set :css_dir, css_dir
       set :stylesheets, local_css.collect { |file| "#{css_dir}/#{file}" }
       
-      set :applet_dir, '/applets/'
-      set :applet_class, 'net.microscraper.client.applet.MicroScraperApplet.class'
-      set :applet_jar, 'MicroScraperApplet.jar'
+      # set :applet_dir, '/applets/'
+      # set :applet_class, 'net.microscraper.client.applet.MicroScraperApplet.class'
+      # set :applet_jar, 'MicroScraperApplet.jar'
       
       set :session_id, :user_id
       set :authentication => RPX::Authentication.new(:api_key => '344cef0cc21bc9ff3b406a7b2c2a2dffc79d39dc')

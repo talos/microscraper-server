@@ -5,11 +5,15 @@
 **/
 
 $(document).ready(function() {
-    if(!$('body').data('microscraper')) {
-	$('body').data('microscraper', {});
-    }
-    var data = $('body').data('microscraper');
-
+    // TODO: initialize this from mustache.
+    var data = {
+	'applet_dir'   : '/applets/', //'{{applet_dir}}',
+	'applet_class' : 'net.microscraper.client.applet.MicroScraperApplet.class', //'{{applet_class}}',
+	'applet_jar'   : 'MicroScraperApplet.jar',  //'{{applet_jar}}',
+	'img_dir'      : '/img', //'{{img_dir}}',
+	'spinner_img'  : '/imag/spinner.gif' //'{{spinner_img}}'
+    };
+    
     /* Allows for PUT and DELETE from forms, reloads upon success. */
     $('form.ajax').each(function() {
 	var method = $(this).attr('method');
