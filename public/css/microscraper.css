@@ -9,11 +9,6 @@
     font-size: 1.0em !important;
 }
 
-/* Hide applet. */
-/*applet {
-    display: none;
-}*/
-
 /* Default margins & padding. */
 div {
     padding: .4em;
@@ -21,6 +16,33 @@ div {
 ul {
     padding: 0px;
     margin: 0px;
+}
+
+/* Log styles */
+div.log {
+    max-height: 100px;
+    overflow-y: scroll;
+}
+
+div.log div.error, div.log div.trace {
+    color: red;
+}
+
+div.log div.warning {
+    color: orange;
+}
+
+div.log div.info {
+    color : blue;
+}
+
+/* Results styles */
+.results .ref {
+    font-style: italic;
+}
+
+.results .value {
+    border: 1px solid gray;
 }
 
 /* Permit inline-block forms. */
@@ -59,4 +81,16 @@ textarea {
 }
 .float-right {
     float: right;
+}
+
+/* Logo */
+div#logo {
+    color: white;
+    font-family: "Andale Mono", Monaco, monospace;
+    font-weight: lighter;
+    font-size: 1.5em;
+    font-style: italic;
+    font-variant: small-caps;
+    letter-spacing: .1em;
+    text-shadow: -1px -1px gray, 1px 1px black;
 }

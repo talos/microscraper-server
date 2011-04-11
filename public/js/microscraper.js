@@ -50,7 +50,6 @@ $(document).ready(function() {
 		    dataType : 'json',
 		    data : data,
 		    success : function ( labels ) {
-			console.log(labels);
 			response ( labels );
 		    },
 		    error : function ( response, responseText ) {

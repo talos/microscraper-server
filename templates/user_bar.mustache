@@ -1,5 +1,5 @@
-{{#user}}
-  <div class="user_bar ui-widget ui-widget-header ui-corner-all">
+<div class="user_bar ui-widget ui-widget-header ui-corner-all">
+  {{#user}}
     <span class="float-left">You are logged in as {{full_name}}.</span>
     &nbsp;
     <span class="float-right">
@@ -8,5 +8,14 @@
         <span><a href="{{logout_location}}">Log out</a></span>
       {{/options}}
     </span>
-  </div>
-{{/user}}
+  {{/user}}
+  {{^user}}
+  <span class="float-left">&nbsp;</span>
+  &nbsp;
+  <span class="float-right">
+    {{#options}}
+      <span><a href="{{login_location}}">Log In</a></span>
+    {{/options}}
+  </span>
+  {{/user}}
+</div>
