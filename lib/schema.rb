@@ -76,7 +76,7 @@ module MicroScraper
               :size => send(name).length,
               :model_location => relationship.target_model.location,
               # :location => location + '/' + name + '/',
-              :location => relationship.target_model.location + full_name + '/',
+              :location => relationship.target_model.location + URI.encode(full_name) + '/',
               :collection => send(name)
             }
           end
@@ -219,7 +219,7 @@ module MicroScraper
           # Resource location.
           def location
             #creator.location + '/' + relationships[:creator].inverse.name.to_s + '/' + attribute_get(:title)
-            model.location + full_name
+            model.location + URI.encode(full_name)
           end
 
           def immutables
@@ -263,12 +263,12 @@ module MicroScraper
                 :name => name,
                 :size => send(name).length,
                 :model_location => relationship.target_model.location,
-                :location => location + '/' + name + '/',
+                :location => location + '/' + URI.encode(name) + '/',
                 :collection => send(name).collect do |resource|
                   # Substitute link location for real location
                   {
                     :full_name => resource.full_name,
-                    :location => "#{location}/#{name}/#{resource.attribute_get(:id)}",
+                    :location => location + '/' + URI.encode(name) + '/' + resource.attribute_get(:id).to_s,
                     :resource => resource
                   }
                 end

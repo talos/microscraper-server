@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'dm-core'
+require 'uri'
 
 module DataMapper
   module Model
@@ -11,7 +12,7 @@ module DataMapper
     def location
       #'/editor/' + self.raw_name + '/'
       # @settings[:directory] + self.raw_name + '/'
-      '/' + self.raw_name + '/'
+      '/' + URI.encode(self.raw_name) + '/'
     end
   end
 
