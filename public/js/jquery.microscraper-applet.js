@@ -101,10 +101,7 @@
 		    param2 = $form.attr('title').split(' ')[0];
 		    param3 = $form.attr('title').split(' ')[1];
 		    param4 = $form.serialize();
-		    console.log(param1);
-		    console.log(param2);
-		    console.log(param3);
-		    console.log(param4);		    
+		    
 		    // Attach and load applet if this has not yet been done.
 		    if(!data.applet) {
 			if(data.applet_elem.parent().size() === 0) {
