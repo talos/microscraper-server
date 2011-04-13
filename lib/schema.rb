@@ -316,8 +316,8 @@ module MicroScraper
         has n, :datas, :through => DataMapper::Resource
         has n, :scrapers, :through => DataMapper::Resource
         
-        traverse :scrapers
-        export :scrapers
+        #traverse :scrapers
+        #export :scrapers
 
         property :value, String
         mustacheable :value
@@ -350,8 +350,8 @@ module MicroScraper
         has n, :source_scrapers, 'Scraper', :through => :links_to_source_scrapers, :via => :source
         has n, :target_scrapers, 'Scraper', :through => :links_to_target_scrapers, :via => :target
         
-        traverse :source_scrapers, :web_pages
-        export :source_scrapers, :web_pages
+        traverse :source_scrapers, :web_pages, :defaults
+        export :source_scrapers, :web_pages, :defaults
         mustacheable :regexp
         
         # Replace blank match_number with nil.
