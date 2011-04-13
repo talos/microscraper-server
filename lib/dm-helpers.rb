@@ -5,7 +5,8 @@ require 'uri'
 module DataMapper
   module Model
     def raw_name
-      DataMapper::Inflector.underscore(name.split('::').last)
+      #DataMapper::Inflector.underscore(name.split('::').last)
+      name.split('::').last
     end
     
     # TODO THIS IS ASSUMING EVERYTHING LIVES IN THE '/' DIRECTORY
