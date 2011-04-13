@@ -49,8 +49,8 @@ module MicroScraper
                   'jquery-form.js',
                   'jquery.cookie.js',
                   'jquery.spinner.js',
-                  'jquery.microscraper-applet.js',
                   'jquery.disabler.js',
+                  'jquery.microscraper-applet.js',
                   'microscraper.js'
                  ]
       set :javascripts, local_js.collect { |file| "#{js_dir}/#{file}" }

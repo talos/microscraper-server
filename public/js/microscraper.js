@@ -3,7 +3,6 @@
 * JavaScript for MicroScraper.
 *
 **/
-
 $(document).ready(function() {
     // TODO: initialize this from mustache.
     var data = {
