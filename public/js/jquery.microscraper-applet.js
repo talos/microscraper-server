@@ -98,8 +98,13 @@
 		if(data) {
 		    var $form = $(this),
 		    param1 = data.options.location, // need an absolute url.
-		    param2 = $form.serialize();
-		    
+		    param2 = $form.attr('title').split(' ')[0];
+		    param3 = $form.attr('title').split(' ')[1];
+		    param4 = $form.serialize();
+		    console.log(param1);
+		    console.log(param2);
+		    console.log(param3);
+		    console.log(param4);		    
 		    // Attach and load applet if this has not yet been done.
 		    if(!data.applet) {
 			if(data.applet_elem.parent().size() === 0) {
@@ -115,7 +120,7 @@
 			try {
 			    if(data.applet.isAlive() === false && started === false) {
 				started = true;
-				data.applet.start(param1, param2);
+				data.applet.start(param1, param2, param3, param4);
 				helpers.log($form, {info : 'Testing JSON at ' + param1 + ' with defaults ' + param2});
 				data.elems.test.attr('disabled', true);
 				data.elems.stop.attr('disabled', false);

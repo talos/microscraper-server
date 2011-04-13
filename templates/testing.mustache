@@ -5,7 +5,9 @@
       {{to_json}}
     </code>
   </div>
-  <form class="test" method="get">
+  {{!model.raw_name}}
+  {{!full_name}}
+  <form class="test" method="get" title="{{model.raw_name}} {{full_name}}">
     <table class="variables">
       {{#variables}}
         <tr>
