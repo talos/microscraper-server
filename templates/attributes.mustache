@@ -2,13 +2,13 @@
 
 {{! List the resource's immutable attributes. }}
 <div class="attributes ui-widget-content">
-  <ul class="immutable">
+  <table class="immutable">
     {{#immutables}}
       {{> attribute}}
     {{/immutables}}
 
     {{! List the resource's mutable attributes with immutables, if we can't edit. }}
-  </ul>
+  </table>
   {{! List the resource's mutable attributes separately, if we can edit.  }}
   <table class="mutable">
     {{^can_edit}}

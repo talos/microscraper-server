@@ -22,7 +22,6 @@
 	log : function($form, obj) {
 	    if(obj) {
 		var $log = $form.data(ns).elems.log;
-		console.log($log);
 		for( key in obj ) {
 		    $log.prepend($('<div>').addClass(key).text(obj[key]));
 		}
@@ -31,7 +30,6 @@
 	addResult : function($form, obj) {
 	    if(obj) {
 		var $results = $form.data(ns).elems.results;
-		console.log($results);
 		for( key in obj ) {
 		    $results.prepend($('<tr>')
 				     .append($('<td>').addClass('key').text(key + ': '))
@@ -50,7 +48,8 @@
 		codebase : options.codebase,
 		code : options.code,
 		width : options.width,
-		height : options.height
+		height : options.height,
+		mayscript : 'mayscript'
 	    });
 	    
 	    return this.each(function() {
@@ -155,7 +154,7 @@
 		    // If the applet is running, kill it. Then do cleanup.
 		    if(data.applet) {
 			if(data.applet.isAlive()) {
-			    data.applet.kill();
+			    data.applet.stop();
 			}
 			$form.microscraper_applet('update');
 			data.elems.test.button('enable');
