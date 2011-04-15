@@ -32,7 +32,7 @@
 					.addClass(ns + '_on')
 					.click(function() {
 					    $('input.' + ns +'_off', data['switch']).attr('checked', false);
-					    $input.attr('disabled', false);
+					    $input.attr('disabled', false).show();
 					}))
 				.append($('<br />'))
 				.append($('<label>').text(options.off).attr('for', name))
@@ -41,12 +41,15 @@
 					.addClass(ns + '_off')
 					.click(function() {
 					    $('input.' + ns + '_on', data['switch']).attr('checked', false);
-					    $input.attr('disabled', true);
+					    $input.attr('disabled', true).hide();
 					})),
 			    container : $('<div>').css({'float' : 'left' } ),
 			    parent : $input.parent(),
 			    originalState : $input.attr('disabled')
 			};
+			if(data.originalState == true) {
+			    $input.hide();
+			}
 			$input.data(ns, data);
 			$input.detach();
 			data.parent.append(data.container.append($input)).append(data['switch']);
@@ -59,7 +62,7 @@
 	    return this.each(function() {
 		var data = $(this).data(ns);
 		if(data) {
-		    $(this).detach().appendTo(data.parent).attr('disabled', data.originalState);
+		    $(this).detach().appendTo(data.parent).attr('disabled', data.originalState).show();
 		    data.container.remove();
 		    data['switch'].remove();
 		    $(this).removeData(ns);
