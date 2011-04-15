@@ -22,6 +22,7 @@
 	log : function($form, obj) {
 	    if(obj) {
 		var $log = $form.data(ns).elems.log;
+		console.log($log);
 		for( key in obj ) {
 		    $log.prepend($('<div>').addClass(key).text(obj[key]));
 		}
@@ -30,9 +31,10 @@
 	addResult : function($form, obj) {
 	    if(obj) {
 		var $results = $form.data(ns).elems.results;
+		console.log($results);
 		for( key in obj ) {
 		    $results.prepend($('<tr>')
-				     .append($('<td>').addClass('ref').text(key + ': '))
+				     .append($('<td>').addClass('key').text(key + ': '))
 				     .append($('<td>').addClass('value').text(obj[key])));
 		}
 	    }
@@ -165,8 +167,8 @@
 	
 	update : function(options) {
 	    return this.each(function() {
-		var data = $(this).data(ns),
-		$form = $(this);
+		var $form = $(this),
+		data = $form.data(ns);
 		if(data) {
 		    var result = data.applet.results();
 		    while( result ) {

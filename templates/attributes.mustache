@@ -8,26 +8,28 @@
     {{/immutables}}
 
     {{! List the resource's mutable attributes with immutables, if we can't edit. }}
+  </ul>
+  {{! List the resource's mutable attributes separately, if we can edit.  }}
+  <table class="mutable">
     {{^can_edit}}
     {{#mutables}}
       {{> attribute}}
     {{/mutables}}
     {{/can_edit}}
-  </ul>
-  {{! List the resource's mutable attributes separately, if we can edit.  }}
-  {{#can_edit}}
-    <ul class="mutable">
+    {{#can_edit}}
       <form class="ajax" method="put" action="{{location}}">
         {{! Hidden input for update consistency. }}
         <input type="hidden" name="last_updated_at" value="{{updated_at}}">
         {{#mutables}}
-          <li class="attribute">
-            <label for="{{name}}">{{name}}:</label>
-            <textarea name="{{name}}">{{value}}</textarea>
+          <tr class="attribute">
+            <td><label for="{{name}}">{{name}}:</label></td>
+            <td><textarea name="{{name}}">{{value}}</textarea></td>
           </li>
         {{/mutables}}
-        <button type="submit">Update</button>
+        <tr>
+          <td><button type="submit">Update</button></td>
+        </tr>
       </form>
-    </ul>
-  {{/can_edit}}
+    {{/can_edit}}
+    </table>
 </div>

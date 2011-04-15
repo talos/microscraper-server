@@ -37,11 +37,11 @@ div.log div.info {
 }
 
 /* Results styles */
-.results .ref {
+.key {
     font-style: italic;
 }
 
-.results .value {
+.value {
     border: 1px solid gray;
 }
 
