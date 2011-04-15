@@ -97,9 +97,12 @@
 		var data = $(this).data(ns);
 		if(data) {
 		    var $form = $(this),
-		    param1 = data.options.location, // need an absolute url.
-		    param2 = $form.attr('title').split(' ')[0];
-		    param3 = $form.attr('title').split(' ')[1];
+		    param1 = data.options.location,
+		    started = false; // need an absolute url.
+		    var action_ary = $form.attr('action').split('/');
+		    action_ary.shift(); // remove leading slash
+		    var param2 = unescape(action_ary.shift());
+		    param3 = unescape(action_ary.join('/'));
 		    param4 = $form.serialize();
 		    
 		    // Attach and load applet if this has not yet been done.
@@ -111,20 +114,21 @@
 		    }
 		    
 		    // We should now have an applet.  If it's not running, start it up and disable the test button.
-		    var prevResults = null,
-		    started = false;
 		    data.running = setInterval(function() {
 			try {
 			    if(data.applet.isAlive() === false && started === false) {
 				started = true;
 				data.applet.start(param1, param2, param3, param4);
-				helpers.log($form, {info : 'Testing JSON at ' + param1 + ' with defaults ' + param2});
-				data.elems.test.attr('disabled', true);
-				data.elems.stop.attr('disabled', false);
+				helpers.log($form,{
+				    info : 'Testing "' + param2 + '" "' + param3 + '" with JSON from ' + param1 + ' with defaults ' + param4
+				});
+				data.elems.test.button('disable');
+				data.elems.stop.button('enable');
 				$form.data(ns).elems.results.empty();
 			    }
 			    $form.microscraper_applet('update');
 			    if(data.applet.isAlive() === false && started === true) {
+				started = false;
 				clearInterval(data.running);
 				helpers.log($form, { info: 'Finished.' });
 				$form.microscraper_applet('stop');
@@ -150,11 +154,10 @@
 		    if(data.applet) {
 			if(data.applet.isAlive()) {
 			    data.applet.kill();
-			    helpers.log($form, { info : 'Stopped.'} );
 			}
 			$form.microscraper_applet('update');
-			data.elems.test.attr('disabled', false);
-			data.elems.stop.attr('disabled', true);
+			data.elems.test.button('enable');
+			data.elems.stop.button('disable');
 		    }
 		}
 	    });
