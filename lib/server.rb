@@ -48,7 +48,6 @@ module MicroScraper
                   'jquery-ui-1.8.10.custom.min.js',
                   'jquery-form.js',
                   'jquery.cookie.js',
-                  'jquery.spinner.js',
                   'jquery.disabler.js',
                   'jquery.microscraper-applet.js',
                   'microscraper.js'

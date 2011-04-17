@@ -20,8 +20,8 @@ ul {
 
 /* Log styles */
 div.log {
-    max-height: 100px;
-    overflow-y: scroll;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 div.log div.error, div.log div.trace {
@@ -43,6 +43,8 @@ div.log div.info {
 
 .value {
     border: 1px solid gray;
+    max-height: 100px;
+    overflow-y: auto;
 }
 
 /* Permit inline-block forms. */

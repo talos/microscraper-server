@@ -2,8 +2,6 @@
 *
 * JavaScript to handle interactions with the MicroScraper Applet.
 *
-* Depends upon jquery.spinner.
-*
 **/
 
 (function( $ ) {
@@ -15,7 +13,10 @@
 	test : 'Test',
 	stop : 'Stop',
 	clear: 'Clear Log',
-	updateFrequency : 100
+	updateFrequency : 100,
+	spinner_src : '/img/spinner.gif',
+	spinner_width : 16,
+	spinner_height : 16
     },
     
     helpers = {
@@ -33,7 +34,7 @@
 		for( key in obj ) {
 		    $results.prepend($('<tr>')
 				     .append($('<td>').addClass('key').text(key + ': '))
-				     .append($('<td>').addClass('value').text(obj[key])));
+				     .append($('<td>').append($('<div>').addClass('value').text(obj[key]))));
 		}
 	    }
 	}
@@ -71,17 +72,26 @@
 			    // Add Stop button
 			    stop : $('<button type="button" />').text(data.options.stop).attr('disabled', true)
 				.click(function() { $form.microscraper_applet('stop'); } ),
-
+			    
 			    // Clear button
 			    clear : $('<button type="button" />').text(data.options.clear)
 				.click(function() { $form.data(ns).elems.log.empty(); }),
 			    
+			    // Spinner icon
+			    spinner : $('<img />').attr({
+				src : data.options.spinner_src,
+				height: data.options.spinner_height,
+				width : data.options.spinner_width
+			    }),
+
 			    log : $('<div />').addClass('log')
 			};
 			
+			// Add all the elements
 			$.each(data.elems, function(name, elem) {
 			    $form.append(elem);
 			});
+			data.elems.spinner.hide(); // make sure this is hidden to start
 			
 			$form.submit(function(event) {
 			    event.preventDefault();
@@ -125,6 +135,7 @@
 				});
 				data.elems.test.button('disable');
 				data.elems.stop.button('enable');
+				data.elems.spinner.show();
 				$form.data(ns).elems.results.empty();
 			    }
 			    $form.microscraper_applet('update');
@@ -159,6 +170,7 @@
 			$form.microscraper_applet('update');
 			data.elems.test.button('enable');
 			data.elems.stop.button('disable');
+			data.elems.spinner.hide();
 		    }
 		}
 	    });
