@@ -30,6 +30,7 @@
 	},
 	addResult : function($form, obj) {
 	    if(obj) {
+		//console.log(obj);
 		var $results = $form.data(ns).elems.results;
 		for( key in obj ) {
 		    $results.prepend($('<tr>')
@@ -182,6 +183,7 @@
 		data = $form.data(ns);
 		if(data) {
 		    var result = data.applet.results();
+		    //console.log(result);
 		    while( result ) {
 			helpers.addResult( $form, $.parseJSON(result) );
 			result = data.applet.results();
