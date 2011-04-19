@@ -245,7 +245,6 @@ module MicroScraper
 
           # Determine what values could possibly be fed in for testing.
           def variables
-            puts 'variables'
             variables = []
             
             related_resources.each do |resource|
@@ -280,14 +279,10 @@ module MicroScraper
           end
           
           def related_resources(resources = [])
-            puts 'related resources'
-            
             # scan the traversable relationships
             model.traversable_relationships.each do |name, relationship|
               send(name).each do |related_resource|
                 # make sure not to loop back
-                puts resources.inspect
-                puts self.inspect
                 if related_resource != self and not resources.include? related_resource
                   resources << related_resource
                   resources.push(*related_resource.related_resources(resources))
@@ -299,7 +294,6 @@ module MicroScraper
           end
           
           def export
-            puts 'export'
             resources = related_resources << self
             dest = {}
             
