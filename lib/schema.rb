@@ -203,6 +203,10 @@ module MicroScraper
           def full_name
             creator.full_name + '/' + title
           end
+          
+          def self.split_full_name(full_name)
+            full_name.split('/')
+          end
 
           # Safely change a resource's attributes
           def modify (new_attributes, last_updated_at, editor)
@@ -241,17 +245,16 @@ module MicroScraper
 
           # Determine what values could possibly be fed in for testing.
           def variables
+            puts 'variables'
             variables = []
-            model.traversable_relationships.each do |name, relationship|
-              send(name).each do |related_resource|
-                variables.push(*related_resource.variables)
-              end
-            end
-            attributes.collect do |attribute|
-              begin
-                variables.push(*Mustache::MicroScraper.extract_variables(attribute))
-              rescue Mustache::Parser::SyntaxError
-                # Ignore malformed attributes
+            
+            related_resources.each do |resource|
+              resource.attributes.collect do |attribute|
+                begin
+                  variables.push(*Mustache::MicroScraper.extract_variables(attribute))
+                rescue Mustache::Parser::SyntaxError
+                  # Ignore malformed attributes
+                end
               end
             end
             variables.uniq # eliminate duplicate variables
@@ -276,34 +279,49 @@ module MicroScraper
             end
           end
           
-          def export (options = {})
-            settings = {
-              :into => {}
-            }.merge(options)
+          def related_resources(resources = [])
+            puts 'related resources'
             
-            dest = settings[:into]
-            
-            attributes = Hash[mutable_attributes]
-            attributes.delete(:description)
-            attributes.delete(:title)
-            
+            # scan the traversable relationships
             model.traversable_relationships.each do |name, relationship|
-              send(name).each do |resource|
-                resource.export(:into => dest)
+              send(name).each do |related_resource|
+                # make sure not to loop back
+                puts resources.inspect
+                puts self.inspect
+                if related_resource != self and not resources.include? related_resource
+                  resources << related_resource
+                  resources.push(*related_resource.related_resources(resources))
+                end
               end
             end
-
-            associations = Hash[model.exportable_relationships.collect do |name, relationship|
-                                  [name, send(name).collect { |resource| resource.full_name } ]
-                                end]
-            export_obj = attributes.merge(associations)
             
-            # Place the resource into a hash with its model-mates
-            dest[model.raw_name] = {} if dest[model.raw_name].nil?
-            dest[model.raw_name][full_name] = export_obj
+            resources
+          end
+          
+          def export
+            puts 'export'
+            resources = related_resources << self
+            dest = {}
+            
+            resources.each do |resource|
+              attributes = Hash[resource.mutable_attributes]
+              attributes.delete(:description)
+              attributes.delete(:title)
+              
+              associations =
+                Hash[resource.model.exportable_relationships.collect do |name, relationship|
+                       [name, resource.send(name).collect { |related_resource| related_resource.full_name } ]
+                     end]
+              export_obj = attributes.merge(associations)
+              
+              # Place the resource into a hash with its model-mates
+              dest[model.raw_name] = {} if dest[model.raw_name].nil?
+              dest[model.raw_name][full_name] = export_obj
+            end
+            
             dest
           end
-
+          
           def to_json
             export.to_json
           end
@@ -342,7 +360,6 @@ module MicroScraper
         property :match_number, Integer,  :required => false
         
         has n, :web_pages, :through => DataMapper::Resource
-        #has n, :defaults,  :through => DataMapper::Resource
         
         has n, :links_to_source_scrapers, 'ScraperLink', :child_key => [:target_id]
         has n, :links_to_target_scrapers, 'ScraperLink', :child_key => [:source_id]
@@ -350,8 +367,8 @@ module MicroScraper
         has n, :source_scrapers, 'Scraper', :through => :links_to_source_scrapers, :via => :source
         has n, :target_scrapers, 'Scraper', :through => :links_to_target_scrapers, :via => :target
         
-        traverse :source_scrapers, :web_pages #, :defaults
-        export :source_scrapers, :web_pages   #, :defaults
+        traverse :source_scrapers, :web_pages
+        export   :source_scrapers, :web_pages
         mustacheable :regexp
         
         # Replace blank match_number with nil.
@@ -368,6 +385,11 @@ module MicroScraper
 
         belongs_to :source, 'Scraper', :key => true
         belongs_to :target, 'Scraper', :key => true
+
+        # prevent self-reference
+        before :valid? do
+          throw :halt if source_id == target_id
+        end
       end
       
       class WebPage
@@ -382,9 +404,31 @@ module MicroScraper
         has n, :headers,        :through => DataMapper::Resource
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
         
-        traverse :terminates, :posts, :headers, :cookies
-        export :terminates, :posts, :headers, :cookies
+        # for logins etc.
+        has n, :links_to_source_web_pages, 'WebPageLink', :child_key => [:target_id]
+        has n, :links_to_target_web_pages, 'WebPageLink', :child_key => [:source_id]
+        
+        has n, :source_web_pages, 'WebPage', :through => :links_to_source_web_pages, :via => :source
+        has n, :target_web_pages, 'WebPage', :through => :links_to_target_web_pages, :via => :target
+        
+        traverse :terminates, :posts, :headers, :cookies , :source_web_pages
+        export   :terminates, :posts, :headers, :cookies , :source_web_pages
         mustacheable :url
+      end
+      
+      class WebPageLink
+        include DataMapper::Resource
+        
+        property :source_id, Integer, :key => true, :min => 1
+        property :target_id, Integer, :key => true, :min => 1
+
+        belongs_to :source, 'WebPage', :key => true
+        belongs_to :target, 'WebPage', :key => true       
+
+        # prevent self-reference
+        before :valid? do
+          throw :halt if source_id == target_id
+        end
       end
 
       class Regexp

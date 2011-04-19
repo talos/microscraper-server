@@ -38,6 +38,7 @@ module MicroScraper
       set :login_location, '/login'
       set :registration_location, '/login'
       set :logout_location, '/logout'
+      set :upload_location, '/upload'
 
       # set :img_dir, '/img'
       # set :spinner_img, options.img_dir + '/spinner.gif'
@@ -187,7 +188,7 @@ module MicroScraper
         if session[options.session_id].nil?
           error 'Error logging in.  Try again later.'
         else
-          user = @db.get_model(:user).get(session[options.session_id])
+          user = @db.get_user_model.get(session[options.session_id])
         end
       end
       redirect options.home_location
@@ -198,6 +199,16 @@ module MicroScraper
       mustache :logout
     end
     
+    # Bulk upload JSON.
+    post options.upload_location do
+      json = JSON.parse(params[:json])
+      json.each do |model_name, resource_hash| 
+        resource_hash.each do |resource_name, resource_values|
+          
+        end
+      end
+    end
+
     # Try to find our model.
     before options.database.directory + ':model/*' do
       @model = @db.get_model(params[:model]) or not_found
@@ -208,7 +219,7 @@ module MicroScraper
     end
 
     before options.database.directory + ':model/:creator_title/*' do
-      @creator  = options.users.first(:title => params[:creator_title]) or not_found
+      @creator = options.users.first(:title => params[:creator_title]) or not_found
       # @creator.model.relationships.keys.include? params[:model] or not_found
       # @model = @creator.send(params[:model])
     end
@@ -219,8 +230,8 @@ module MicroScraper
         error "You may not create resources for another user."
       end
       @resource = @model.first_or_new(:creator => @user, :title => params[:title])
-      @resource.save or resource_error @resource, @related_resource
-      mustache :created  # @related_resource.location
+      @resource.save or resource_error @resource
+      mustache :created
     end
     
     ###### RESOURCES
@@ -281,12 +292,14 @@ module MicroScraper
       if @related_model.raw_name == 'user'
         @related_resource = @related_model.first(:title => params[:title]) or not_found
       else
-        split_title = params[:title].split '/'
+        split_title = MicroScraper::Database::Schema::Resource.split_full_name(params[:title]) #params[:title].split('/')
+        # Assume we are working with this user if no slash, try to create the resource if it doesn't exist.
         if split_title.length == 1
           @related_resource = @related_model.first_or_new(:creator => @user, :title => params[:title])
+        # If no user specified, try to find the resource.
         elsif split_title.length == 2
-          creator = @db.get_model(:user).first(:title => split_title[0]) or not_found
-          @related_resource = @related_model.first_or_new(:creator => creator, :title => split_title[1])
+          creator = options.users.first(:title => split_title[0]) or not_found
+          @related_resource = @related_model.first(:creator => creator, :title => split_title[1]) or not_found
         else
           error 'You may only use one slash to separate the creator from the title of the resource.'
         end
