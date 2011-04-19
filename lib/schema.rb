@@ -278,12 +278,13 @@ module MicroScraper
             end
           end
           
-          def related_resources(resources = [])
+          def related_resources(prior = [])
+            resources = []
             # scan the traversable relationships
             model.traversable_relationships.each do |name, relationship|
               send(name).each do |related_resource|
                 # make sure not to loop back
-                if related_resource != self and not resources.include? related_resource
+                if related_resource != self and not prior.include? related_resource
                   resources << related_resource
                   resources.push(*related_resource.related_resources(resources))
                 end
@@ -294,7 +295,7 @@ module MicroScraper
           end
           
           def export
-            resources = related_resources << self
+            resources = related_resources.push(self)
             dest = {}
             
             resources.each do |resource|
@@ -307,10 +308,10 @@ module MicroScraper
                        [name, resource.send(name).collect { |related_resource| related_resource.full_name } ]
                      end]
               export_obj = attributes.merge(associations)
-              
+
               # Place the resource into a hash with its model-mates
-              dest[model.raw_name] = {} if dest[model.raw_name].nil?
-              dest[model.raw_name][full_name] = export_obj
+              dest[resource.model.raw_name] = {} if dest[resource.model.raw_name].nil?
+              dest[resource.model.raw_name][resource.full_name] = export_obj
             end
             
             dest
