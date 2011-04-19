@@ -18,8 +18,12 @@ $(document).ready(function() {
 	var method = $(this).attr('method');
 	$(this).ajaxForm({
 	    type : method,
-	    success : function() {
-		location.reload();
+	    success : function(response) {
+		if(response) {
+		    window.location = response;
+		} else {
+		    $(location).get(0).reload();
+		}
 	    },
 	    error : function(response, responseText) {
 		$.error( responseText );

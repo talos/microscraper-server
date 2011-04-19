@@ -263,7 +263,8 @@ module MicroScraper
       elsif @model
         @resource = @model.create(params.merge({:creator => @user}))
       end
-      mustache :created # @resource_dir + @resource.location
+      # @resource.location # @resource_dir + @resource.location
+      mustache :created
     end
     
     # Delete a resource and all its links.
