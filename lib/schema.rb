@@ -398,16 +398,15 @@ module MicroScraper
         has n, :posts,          :through => DataMapper::Resource
         has n, :headers,        :through => DataMapper::Resource
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
+
+        has n, :links_to_login_web_pages, 'WebPageLink', :child_key => [:target_id]
+        has n, :links_to_logged_in_web_pages, 'WebPageLink', :child_key => [:source_id]
         
-        # for logins etc.
-        has n, :links_to_source_web_pages, 'WebPageLink', :child_key => [:target_id]
-        has n, :links_to_target_web_pages, 'WebPageLink', :child_key => [:source_id]
+        has n, :login_web_pages, 'WebPage', :through => :links_to_login_web_pages, :via => :source
+        has n, :logged_in_web_pages, 'WebPage', :through => :links_to_logged_in_web_pages, :via => :target
         
-        has n, :source_web_pages, 'WebPage', :through => :links_to_source_web_pages, :via => :source
-        has n, :target_web_pages, 'WebPage', :through => :links_to_target_web_pages, :via => :target
-        
-        traverse :terminates, :posts, :headers, :cookies , :source_web_pages
-        export   :terminates, :posts, :headers, :cookies , :source_web_pages
+        traverse :terminates, :posts, :headers, :cookies , :login_web_pages
+        export   :terminates, :posts, :headers, :cookies , :login_web_pages
         mustacheable :url
       end
       
