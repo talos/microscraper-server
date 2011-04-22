@@ -351,9 +351,7 @@ module MicroScraper
         
         has n, :datas, :through => DataMapper::Resource
         
-        property :regexp,          Text,  :default => ''
-        property :match_number, Integer,  :required => false
-        
+        has n, :regexps,   :through => DataMapper::Resource
         has n, :web_pages, :through => DataMapper::Resource
         
         has n, :links_to_source_scrapers, 'ScraperLink', :child_key => [:target_id]
@@ -362,14 +360,8 @@ module MicroScraper
         has n, :source_scrapers, 'Scraper', :through => :links_to_source_scrapers, :via => :source
         has n, :target_scrapers, 'Scraper', :through => :links_to_target_scrapers, :via => :target
         
-        traverse :source_scrapers, :web_pages
-        export   :source_scrapers, :web_pages
-        mustacheable :regexp
-        
-        # Replace blank match_number with nil.
-        after :match_number= do 
-          send(:match_number=, nil) if match_number == ''
-        end
+        traverse :source_scrapers, :web_pages, :regexps
+        export   :source_scrapers, :web_pages, :regexps
       end
 
       class ScraperLink
@@ -429,10 +421,17 @@ module MicroScraper
         include Resource
         
         has n, :web_pages, :through => DataMapper::Resource
-        
-        property :regexp, String, :default => ''
+        has n, :scrapers,  :through => DataMapper::Resource
+
+        property :regexp,          Text, :default => ''
+        property :match_number, Integer,  :required => false
 
         mustacheable :regexp
+
+        # Replace blank match_number with nil.
+        after :match_number= do 
+          send(:match_number=, nil) if match_number == ''
+        end
       end
       
       class Post
