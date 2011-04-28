@@ -182,11 +182,12 @@
 		var $form = $(this),
 		data = $form.data(ns);
 		if(data) {
-		    var result = data.applet.results();
+		    var execution = data.applet.nextExecution();
 		    //console.log(result);
-		    while( result ) {
-			helpers.addResult( $form, $.parseJSON(result) );
-			result = data.applet.results();
+		    while( execution ) {
+			console.log(execution);
+			helpers.addResult( $form, $.parseJSON(execution) );
+			execution = data.applet.nextExecution();
 		    }
 		    var log = data.applet.log();
 		    while( log ) {
