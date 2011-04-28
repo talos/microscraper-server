@@ -28,12 +28,15 @@
 		}
 	    }
 	},
-	addResult : function($form, obj) {
+	clearExecutions: function($form) {
+	    var $executions = $form.data(ns).elems.executions;
+	    $executions.empty();
+	},
+	addExecution : function($form, obj) {
 	    if(obj) {
-		//console.log(obj);
-		var $results = $form.data(ns).elems.results;
+		var $executions = $form.data(ns).elems.executions;
 		for( key in obj ) {
-		    $results.prepend($('<tr>')
+		    $executions.prepend($('<tr>')
 				     .append($('<td>').addClass('key').text(key + ': '))
 				     .append($('<td>').append($('<div>').addClass('value').text(obj[key]))));
 		}
@@ -65,7 +68,7 @@
 			data.options = options;
 			data.applet_elem = applet_elem;
 			data.elems = {
-			    results : $('<table />').addClass('results'),
+			    executions : $('<table />').addClass('exeuctions'),
 
 			    // Add Test (submit) button
 			    test : $('<button type="submit" />').text(data.options.test),
@@ -137,7 +140,7 @@
 				data.elems.test.button('disable');
 				data.elems.stop.button('enable');
 				data.elems.spinner.show();
-				$form.data(ns).elems.results.empty();
+				$form.data(ns).elems.executions.empty();
 			    }
 			    $form.microscraper_applet('update');
 			    if(data.applet.isAlive() === false && started === true) {
@@ -182,11 +185,10 @@
 		var $form = $(this),
 		data = $form.data(ns);
 		if(data) {
+		    helpers.clearExecutions( $form );
 		    var execution = data.applet.nextExecution();
-		    //console.log(result);
 		    while( execution ) {
-			console.log(execution);
-			helpers.addResult( $form, $.parseJSON(execution) );
+			helpers.addExecution( $form, $.parseJSON(execution) );
 			execution = data.applet.nextExecution();
 		    }
 		    var log = data.applet.log();
