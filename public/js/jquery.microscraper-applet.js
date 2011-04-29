@@ -34,12 +34,30 @@
 	},
 	addExecution : function($form, obj) {
 	    if(obj) {
-		var $executions = $form.data(ns).elems.executions;
-		for( key in obj ) {
-		    $executions.prepend($('<tr>')
-				     .append($('<td>').addClass('key').text(key + ': '))
-				     .append($('<td>').append($('<div>').addClass('value').text(obj[key]))));
+		console.log(obj);
+		var $executions = $form.data(ns).elems.executions,
+		$execution = $('<tr>').addClass(obj.status),
+		$key = $('<td>').addClass('key').text(obj.name + ': '),
+		$value = $('<td>');
+
+		switch (obj.status) {
+		case 'successful':
+		    $value.append($('<div>').addClass('value').text(obj.value));
+		    break;
+		case 'in_progress':
+		    if('missing_variables' in obj) {
+			$.each(obj.missing_variables, function(missing_variable) {
+			    $value.append($('<div>').addClass('missing').text(missing_variable));
+			});
+		    }
+		    break;
+		case 'failure':
+		    $.each(obj.errors, function(error) {
+			$value.append($('<div>').addClass('error').text(error));
+		    });
+		    break;
 		}
+		$executions.prepend($execution.append($key).append($value));
 	    }
 	}
     },

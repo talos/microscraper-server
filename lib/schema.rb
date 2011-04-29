@@ -384,13 +384,14 @@ module MicroScraper
         
         has n, :scrapers, :through => DataMapper::Resource
         
-        has n, :terminates, 'Regexp', :through => DataMapper::Resource
+        has n, :terminates, 'Regexp', :through => :terminate_links, :via => :regexp
+        has n, :terminate_links
         
         property :url, String,  :default => ''
         has n, :posts,          :through => DataMapper::Resource
         has n, :headers,        :through => DataMapper::Resource
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
-
+        
         has n, :links_to_login_web_pages, 'WebPageLink', :child_key => [:target_id]
         has n, :links_to_logged_in_web_pages, 'WebPageLink', :child_key => [:source_id]
         
@@ -416,11 +417,20 @@ module MicroScraper
           throw :halt if source_id == target_id
         end
       end
+      
+      class TerminateLink
+        include DataMapper::Resource
+        
+        belongs_to :web_page, :key => true
+        belongs_to :regexp, :key => true
+      end
 
       class Regexp
         include Resource
         
-        has n, :web_pages, :through => DataMapper::Resource
+        has n, :web_pages, :through => :terminate_links
+        has n, :terminate_links
+
         has n, :scrapers,  :through => DataMapper::Resource
 
         property :regexp,          Text, :default => ''
