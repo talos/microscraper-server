@@ -80,7 +80,7 @@ module MicroScraper
       def resource_error (*resources)
         @resource_errors = resources.collect { |resource| resource.errors.to_a }.flatten
         puts @resource_errors.inspect
-        halt 500
+        halt 500, @resource_errors.inspect
       end
 
       # Attempt to use request headers to determine the format of response.
