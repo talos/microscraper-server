@@ -117,12 +117,14 @@ module MicroScraper
             end
             
             # Check mustacheable attributes for mustacheability
-            before :valid? do
+            validates_with_method :check_mustacheability
+            def check_mustacheability
               model.mustacheable_attributes.each do |attr|
                 begin
                   Mustache.templateify(send(attr)).send(:tokens)
+                  true
                 rescue Mustache::Parser::SyntaxError
-                  throw :halt
+                  [ false, "'#{attr}' is not a valid Mustache template." ]
                 end
               end
             end
@@ -238,19 +240,26 @@ module MicroScraper
               public_methods.include?(name.to_s + '=')
             end
           end
-
+          
           def mutables
-            mutable_attributes.collect { |name, value| {:name => name, :value => value}}
+            sorted_mutable_attributes = mutable_attributes.sort { |a, b|
+              a.to_s <=> b.to_s
+            }.collect { |name, value| {:name => name, :value => value}}
           end
 
           # Determine what values could possibly be fed in for testing.
           def variables
             variables = []
+
+            #model.mustacheable_attributes.each do |attr|
+            #begin
+            #Mustache.templateify(send(attr)).send(:tokens)
             
-            related_resources.each do |resource|
-              resource.attributes.collect do |attribute|
+            (related_resources.push(self)).each do |resource|
+              resource.model.mustacheable_attributes.collect do |attr_name|
+                puts attr_name
                 begin
-                  variables.push(*Mustache::MicroScraper.extract_variables(attribute))
+                  variables.push(*Mustache::MicroScraper.extract_variables(send(attr_name)))
                 rescue Mustache::Parser::SyntaxError
                   # Ignore malformed attributes
                 end
@@ -432,15 +441,34 @@ module MicroScraper
         has n, :terminate_links
 
         has n, :scrapers,  :through => DataMapper::Resource
-
-        property :regexp,          Text, :default => ''
-        property :match_number, Integer,  :required => false
-
-        mustacheable :regexp
-
+        
+        property :regexp,       Text,    :required => true, :default => ''
+        property :match_number, Integer, :required => false
+        property :substition,   Text,    :required => true, :default => '$0'
+        property :case_insensitive, Boolean, :required => true, :default => true
+        property :multiline,        Boolean, :required => true, :default => false
+        property :dot_matches_newline, Boolean, :required => true, :default => true
+        
+        mustacheable :regexp, :substition
+        
         # Replace blank match_number with nil.
         after :match_number= do 
           send(:match_number=, nil) if match_number == ''
+        end
+        
+        # Validate regular expression format, standardize how regexp looks.
+        validates_with_method :validate_regexp
+        def validate_regexp
+          # Remove mustache components
+          regexp_no_mustache = Mustache::MicroScraper.remove_tags(regexp)
+          
+          # Test regular expression once mustache components are removed
+          begin
+            Object::Regexp.compile(regexp_no_mustache)
+            true
+          rescue RegexpError
+            [ false, "Could not compile '#{regexp}' as regular expression" ]
+          end
         end
       end
       
