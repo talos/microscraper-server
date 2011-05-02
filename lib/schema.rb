@@ -259,7 +259,7 @@ module MicroScraper
               resource.model.mustacheable_attributes.collect do |attr_name|
                 puts attr_name
                 begin
-                  variables.push(*Mustache::MicroScraper.extract_variables(send(attr_name)))
+                  variables.push(*Mustache::MicroScraper.extract_variables(resource.send(attr_name)))
                 rescue Mustache::Parser::SyntaxError
                   # Ignore malformed attributes
                 end
