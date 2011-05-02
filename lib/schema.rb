@@ -444,7 +444,7 @@ module MicroScraper
         
         property :regexp,       Text,    :required => true, :default => ''
         property :match_number, Integer, :required => false
-        property :substition,   Text,    :required => true, :default => '$0'
+        property :substitution,   Text,    :required => true, :default => '$0'
         property :case_insensitive, Boolean, :required => true, :default => true
         property :multiline,        Boolean, :required => true, :default => false
         property :dot_matches_newline, Boolean, :required => true, :default => true
