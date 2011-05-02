@@ -7,6 +7,8 @@
 #   schema.rb : Database definitions.
 ###
 
+gem 'json', '~>1.4.6'
+
 require 'rubygems'
 require 'dm-core'
 require 'dm-types'
@@ -46,6 +48,13 @@ module MicroScraper
         has n, :cookies, 'Cookie',  :child_key => [ :creator_id ]
         has n, :regexps, :child_key => [ :creator_id ]
         
+        # Replaces whitespace in title with dashes, eliminate other nonalphanumerics
+        before :save, :filter_title
+        def filter_title
+          self.title= title.gsub(/\s+/, '-')
+          self.title= title.gsub(/[^a-zA-Z0-9\-]/, '')
+        end
+
         # Only the user can modify his/her own resource.
         def editable_by? (user)
           user == self ? true : false
@@ -70,14 +79,13 @@ module MicroScraper
         
         ## TODO: DRY this out
         def associations
-          model.relationships.collect do |name, relationship|
+          model.relationships.collect do |r|
             {
-              :name => name,
-              :size => send(name).length,
-              :model_location => relationship.target_model.location,
-              # :location => location + '/' + name + '/',
-              :location => relationship.target_model.location + URI.encode(full_name) + '/',
-              :collection => send(name)
+              :name => r.name,
+              :size => send(r.name).length,
+              :model_location => r.target_model.location,
+              :location => r.target_model.location + URI.encode(full_name) + '/',
+              :collection => send(r.name)
             }
           end
         end
@@ -96,9 +104,6 @@ module MicroScraper
 
             property :title, DataMapper::Property::String, :required => true, :unique_index => :creator_name_deleted
             
-            # Make sure names don't contain a slash.
-            validates_with_method :title, :validate_title
-
             property :description, DataMapper::Property::Text
             
             belongs_to :creator, :model => 'User', :required => true
@@ -113,8 +118,8 @@ module MicroScraper
             
             # Destroy links before destroying resource.
             before :destroy do
-              model.many_to_many_relationships.each do |name, relationship|
-                send(name).intermediaries.destroy
+              model.many_to_many_relationships.each do |r|
+                send(r.name).intermediaries.destroy
               end
             end
             
@@ -125,17 +130,16 @@ module MicroScraper
               end
             end
             
-            
             # Check mustacheable attributes for mustacheability
             def check_mustacheability
               model.mustacheable_attributes.each do |attr|
                 begin
                   Mustache.templateify(send(attr)).send(:tokens)
-                  true
                 rescue Mustache::Parser::SyntaxError
-                  [ false, "'#{attr}' is not a valid Mustache template." ]
+                  return [ false, "'#{attr}' is not a valid Mustache template." ]
                 end
               end
+              true
             end
 
             # Replaces whitespace in title with dashes, eliminate other nonalphanumerics
@@ -150,12 +154,12 @@ module MicroScraper
             end
             
             def self.many_to_many_relationships
-              relationships.select { |name, relationship| relationship.class == DataMapper::Associations::ManyToMany::Relationship }
+              relationships.select { |r| r.class == DataMapper::Associations::ManyToMany::Relationship }
             end
             
             def self.traversable_relationships
-              many_to_many_relationships.select do |name, relationship|
-                @traverse.to_a.include?(name.to_sym)
+              many_to_many_relationships.select do |r|
+                @traverse.to_a.include?(r.name.to_sym)
               end
             end
             
@@ -164,8 +168,8 @@ module MicroScraper
             end
             
             def self.exportable_relationships
-              many_to_many_relationships.select do |name, relationship|
-                @export.to_a.include?(name.to_sym)
+              many_to_many_relationships.select do |r|
+                @export.to_a.include?(r.name.to_sym)
               end
             end
 
@@ -273,17 +277,17 @@ module MicroScraper
           end
           
           def associations
-            model.many_to_many_relationships.collect do |name, relationship|
+            model.many_to_many_relationships.collect do |r|
               {
-                :name => name,
-                :size => send(name).length,
-                :model_location => relationship.target_model.location,
-                :location => location + '/' + URI.encode(name) + '/',
-                :collection => send(name).collect do |resource|
+                :name => r.name,
+                :size => send(r.name).length,
+                :model_location => r.target_model.location,
+                :location => location + '/' + URI.encode(r.name.to_s) + '/',
+                :collection => send(r.name).collect do |resource|
                   # Substitute link location for real location
                   {
                     :full_name => resource.full_name,
-                    :location => location + '/' + URI.encode(name) + '/' + resource.attribute_get(:id).to_s,
+                    :location => location + '/' + URI.encode(r.name.to_s) + '/' + resource.attribute_get(:id).to_s,
                     :resource => resource
                   }
                 end
@@ -294,8 +298,8 @@ module MicroScraper
           def related_resources(prior = [])
             resources = []
             # scan the traversable relationships
-            model.traversable_relationships.each do |name, relationship|
-              send(name).each do |related_resource|
+            model.traversable_relationships.each do |r|
+              send(r.name).each do |related_resource|
                 # make sure not to loop back
                 if related_resource != self and not prior.include? related_resource
                   resources << related_resource
@@ -317,8 +321,8 @@ module MicroScraper
               attributes.delete(:title)
               
               associations =
-                Hash[resource.model.exportable_relationships.collect do |name, relationship|
-                       [name, resource.send(name).collect { |related_resource| related_resource.full_name } ]
+                Hash[resource.model.exportable_relationships.collect do |r|
+                       [r.name, resource.send(r.name).collect { |related_resource| related_resource.full_name } ]
                      end]
               export_obj = attributes.merge(associations)
 
@@ -376,7 +380,7 @@ module MicroScraper
         traverse :source_scrapers, :web_pages, :regexps
         export   :source_scrapers, :web_pages, :regexps
       end
-
+      
       class ScraperLink
         include DataMapper::Resource
         
@@ -387,8 +391,13 @@ module MicroScraper
         belongs_to :target, 'Scraper', :key => true
 
         # prevent self-reference
-        before :valid? do
-          throw :halt if source_id == target_id
+        validates_with_method :prevent_self_reference
+        def prevent_self_reference
+          if source_id == target_id
+            [ false, 'Scraper cannot link to itself.' ]
+          else
+            true
+          end
         end
       end
       
@@ -400,7 +409,7 @@ module MicroScraper
         has n, :terminates, 'Regexp', :through => :terminate_links, :via => :regexp
         has n, :terminate_links
         
-        property :url, String,  :default => ''
+        property :url, String,  :default => 'http://www.google.com/'
         has n, :posts,          :through => DataMapper::Resource
         has n, :headers,        :through => DataMapper::Resource
         has n, :cookies, 'Cookie', :through => DataMapper::Resource
@@ -414,6 +423,8 @@ module MicroScraper
         traverse :terminates, :posts, :headers, :cookies , :login_web_pages
         export   :terminates, :posts, :headers, :cookies , :login_web_pages
         mustacheable :url
+
+        validates_format_of :url, :as => :url
       end
       
       class WebPageLink
@@ -426,8 +437,13 @@ module MicroScraper
         belongs_to :target, 'WebPage', :key => true       
 
         # prevent self-reference
-        before :valid? do
-          throw :halt if source_id == target_id
+        validates_with_method :prevent_self_reference
+        def prevent_self_reference
+          if source_id == target_id
+            [ false, 'Scraper cannot link to itself.' ]
+          else
+            true
+          end
         end
       end
       

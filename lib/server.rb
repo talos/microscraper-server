@@ -6,6 +6,8 @@
 #
 ###
 
+gem 'json', '~>1.4.6'
+
 require 'rubygems'
 require 'sinatra/base'
 require 'mustache/sinatra'
@@ -230,6 +232,7 @@ module MicroScraper
         error "You may not create resources for another user."
       end
       @resource = @model.first_or_new(:creator => @user, :title => params[:title])
+      # @resource.raise_on_save_failure = true
       @resource.save or resource_error @resource
       mustache :created
     end
