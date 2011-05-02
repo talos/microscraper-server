@@ -449,7 +449,7 @@ module MicroScraper
         property :multiline,        Boolean, :required => true, :default => false
         property :dot_matches_newline, Boolean, :required => true, :default => true
         
-        mustacheable :regexp, :substition
+        mustacheable :regexp, :substitution
         
         # Replace blank match_number with nil.
         after :match_number= do 
