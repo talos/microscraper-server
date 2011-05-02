@@ -108,24 +108,13 @@ module MicroScraper
 
             has n, :editors, :model => 'User', :through => DataMapper::Resource
             property :last_editor_id, DataMapper::Property::Integer, :accessor => :private
+
+            validates_with_method :check_mustacheability
             
             # Destroy links before destroying resource.
             before :destroy do
               model.many_to_many_relationships.each do |name, relationship|
                 send(name).intermediaries.destroy
-              end
-            end
-            
-            # Check mustacheable attributes for mustacheability
-            validates_with_method :check_mustacheability
-            def check_mustacheability
-              model.mustacheable_attributes.each do |attr|
-                begin
-                  Mustache.templateify(send(attr)).send(:tokens)
-                  true
-                rescue Mustache::Parser::SyntaxError
-                  [ false, "'#{attr}' is not a valid Mustache template." ]
-                end
               end
             end
             
@@ -136,6 +125,26 @@ module MicroScraper
               end
             end
             
+            
+            # Check mustacheable attributes for mustacheability
+            def check_mustacheability
+              model.mustacheable_attributes.each do |attr|
+                begin
+                  Mustache.templateify(send(attr)).send(:tokens)
+                  true
+                rescue Mustache::Parser::SyntaxError
+                  [ false, "'#{attr}' is not a valid Mustache template." ]
+                end
+              end
+            end
+
+            # Replaces whitespace in title with dashes, eliminate other nonalphanumerics
+            before :save, :filter_title
+            def filter_title
+              self.title= title.gsub(/\s+/, '-')
+              self.title= title.gsub(/[^a-zA-Z0-9\-]/, '')
+            end
+
             def self.related_model (relationship)
               relationships[relationship.to_sym] ? relationships[relationship.to_sym].target_model : nil
             end
@@ -251,13 +260,8 @@ module MicroScraper
           def variables
             variables = []
 
-            #model.mustacheable_attributes.each do |attr|
-            #begin
-            #Mustache.templateify(send(attr)).send(:tokens)
-            
             (related_resources.push(self)).each do |resource|
               resource.model.mustacheable_attributes.collect do |attr_name|
-                puts attr_name
                 begin
                   variables.push(*Mustache::MicroScraper.extract_variables(resource.send(attr_name)))
                 rescue Mustache::Parser::SyntaxError
