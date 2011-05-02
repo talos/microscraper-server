@@ -222,8 +222,6 @@ module MicroScraper
 
     before options.database.directory + ':model/:creator_title/*' do
       @creator = options.users.first(:title => params[:creator_title]) or not_found
-      # @creator.model.relationships.keys.include? params[:model] or not_found
-      # @model = @creator.send(params[:model])
     end
     
     # Create a new resource.  Returns the location of the new resource
@@ -285,7 +283,9 @@ module MicroScraper
     # Link relationship must be many-to-many
     before options.database.directory + ':model/:creator_title/:resource_title/:relationship/*' do
       @relationship_name = params[:relationship].to_sym
-      not_found unless @model.many_to_many_relationships.find { |name, relationship| name == @relationship_name.to_s }
+      not_found unless @model.many_to_many_relationships.find do |r|
+        r.name.to_sym == @relationship_name
+      end
       @relationship = @resource.send(@relationship_name)
       @related_model = @model.related_model(@relationship_name)
     end
