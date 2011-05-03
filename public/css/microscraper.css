@@ -18,6 +18,11 @@ ul {
     margin: 0px;
 }
 
+/* Execution styles. */
+.delay {
+    background: yellow;
+}
+
 /* Log styles */
 div.log {
     max-height: 200px;

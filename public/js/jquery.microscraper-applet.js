@@ -39,8 +39,9 @@
 		$execution = $('<tr>').addClass(obj.status),
 		$key = $('<td>').addClass('key').text(obj.name + ': '),
 		$value = $('<td>');
-
-		switch (obj.status) {
+		
+		$value.append($('<div>').addClass('value').text(obj.value));
+		/*switch (obj.status) {
 		case 'successful':
 		    $value.append($('<div>').addClass('value').text(obj.value));
 		    break;
@@ -56,7 +57,7 @@
 			$value.append($('<div>').addClass('error').text(error));
 		    });
 		    break;
-		}
+		}*/
 		$executions.prepend($execution.append($key).append($value));
 	    }
 	}
