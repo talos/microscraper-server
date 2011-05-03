@@ -44,7 +44,6 @@ $(document).ready(function() {
 	    error : function(response) {
 		$errorText.text(response.responseText);
 		$error.show();
-		//$.error( response.responseText );
 	    }
 	});
     });
