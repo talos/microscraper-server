@@ -20,8 +20,6 @@ module MicroScraper
       
       #DataMapper::Logger.new($stdout, :debug)
       DataMapper.setup(:default, ENV['DATABASE_URL'] || 'sqlite3://' + Dir.pwd + @settings[:file])
-      
-      
       DataMapper.finalize
       
       begin

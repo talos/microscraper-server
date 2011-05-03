@@ -14,23 +14,41 @@ $(document).ready(function() {
     };
     
     /* Allows for PUT and DELETE from forms, reloads upon success. */
+    /* Also displays errors. */
     $('form.ajax').each(function() {
-	var method = $(this).attr('method');
-	$(this).ajaxForm({
+	var method = $(this).attr('method'),
+	$form = $(this),
+	$errorText = $('<span />'),
+	$errorClose = $('<span />')
+	    .addClass('ui-icon ui-icon-close')
+	    .css({ float : 'right' , cursor : 'pointer' }),
+	$error = $('<div />').addClass('ui-state-error')
+	    .append($('<span />')
+		    .addClass('ui-icon ui-icon-alert')
+		    .css({ float : 'left' }))
+	    .append($errorText)
+	    .append($errorClose)
+	    .hide();
+	$errorClose.click(function() { $error.hide(); } );
+	$form.append($error);
+	$form.ajaxForm({
 	    type : method,
 	    success : function(response) {
+		$error.hide();
 		if(response) {
 		    window.location = response;
 		} else {
 		    $(location).get(0).reload();
 		}
 	    },
-	    error : function(response, responseText) {
-		$.error( responseText );
+	    error : function(response) {
+		console.log($error);
+		$errorText.text(response.responseText);
+		$error.show();
+		//$.error( response.responseText );
 	    }
 	});
     });
-
     
     /* Testing. Intercept test form submission and give it to the applet. */
     $('form.test').microscraper_applet({

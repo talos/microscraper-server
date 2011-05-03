@@ -7,6 +7,11 @@
 #   schema.rb : Database definitions.
 ###
 
+gem 'dm-core', '~>1.1.0'
+gem 'dm-types', '~>1.1.0'
+gem 'dm-migrations', '~>1.1.0'
+gem 'dm-validations', '~>1.1.0'
+gem 'dm-timestamps', '~>1.1.0'
 gem 'json', '~>1.4.6'
 
 require 'rubygems'
@@ -462,11 +467,11 @@ module MicroScraper
 
         has n, :scrapers,  :through => DataMapper::Resource
         
-        property :regexp,       Text,    :required => true, :default => ''
-        property :match_number, Integer, :required => false
-        property :substitution,   Text,    :required => true, :default => '$0'
-        property :case_insensitive, Boolean, :required => true, :default => true
-        property :multiline,        Boolean, :required => true, :default => false
+        property :regexp,              Text,    :required => true, :default => '.*'
+        property :match_number,        Integer, :required => false
+        property :substitution,        Text,    :required => true, :default => '$0'
+        property :case_insensitive,    Boolean, :required => true, :default => true
+        property :multiline,           Boolean, :required => true, :default => false
         property :dot_matches_newline, Boolean, :required => true, :default => true
         
         mustacheable :regexp, :substitution
