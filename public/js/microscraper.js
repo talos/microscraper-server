@@ -42,7 +42,6 @@ $(document).ready(function() {
 		}
 	    },
 	    error : function(response) {
-		console.log($error);
 		$errorText.text(response.responseText);
 		$error.show();
 		//$.error( response.responseText );
