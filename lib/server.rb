@@ -90,21 +90,27 @@ module MicroScraper
       # requests receive JSON while non XHR requests receive HTML.
       def determine_request_type
         if request.request_method == 'GET'
-          case params[:format]
+          case params[:format] # explicit format parameter
           when 'html'
             return :html
           when 'json'
             return :json
           end
         end
-        json_ok = request.accept.include?('*/*') or request.accept.find { |header| header =~ /json/ }
-        html_ok = request.accept.include?('*/*') or request.accept.find { |header| header =~ /html/ }
-        if json_ok and not html_ok
+        all_ok  = request.accept.include?('*/*')
+        json_ok = request.accept.find { |header| header =~ /json/ }
+        html_ok = request.accept.find { |header| header =~ /html/ }
+
+        if all_ok
+          if request.xhr?
+            :json
+          else
+            :html
+          end
+        elsif json_ok and not html_ok
           :json
         elsif html_ok and not json_ok
           :html
-        elsif request.xhr?
-          :json
         else
           :html
         end

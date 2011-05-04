@@ -44,8 +44,8 @@ module MicroScraper
         property :title, DataMapper::Property::String, :required => true, :unique => true
         
         has n, :scrapers,   :child_key => [ :creator_id ]
-        has n, :defaults,   :child_key => [ :creator_id ]
-        has n, :datas,      :child_key => [ :creator_id ]
+        has n, :substitutions,   :child_key => [ :creator_id ]
+        has n, :bundles,      :child_key => [ :creator_id ]
         has n, :web_pages,  :child_key => [ :creator_id ]
         
         has n, :posts,   :child_key => [ :creator_id ]
@@ -345,35 +345,42 @@ module MicroScraper
         end
       end
       
-      class Default
+      class Substitution
         include Resource
         
-        has n, :datas, :through => DataMapper::Resource
+        has n, :bundles, :through => DataMapper::Resource
         has n, :scrapers, :through => DataMapper::Resource
         
-        #traverse :scrapers
+        traverse :scrapers
         export :scrapers
 
         property :value, String
         mustacheable :value
       end
       
-      class Data
+      class Bundle
         include Resource
         
-        has n, :defaults, :through => DataMapper::Resource
+        has n, :substitutions, :through => DataMapper::Resource
         has n, :scrapers, :through => DataMapper::Resource
 
-        traverse :defaults, :scrapers
-        export :defaults, :scrapers
+        traverse :substitutions, :scrapers
+        export :substitutions, :scrapers
       end
       
       class Scraper
         include Resource
         
-        has n, :datas, :through => DataMapper::Resource
+        has n, :bundles, :through => DataMapper::Resource
         
-        has n, :regexps,   :through => DataMapper::Resource
+        #has n, :regexps,   :through => DataMapper::Resource
+        
+        has n, :searches_with, 'Regexp', :through => :search_links, :via => :regexp
+        has n, :search_links
+        
+        has n, :tested_by, 'Regexp', :through => :test_links, :via => :regexp
+        has n, :test_links
+
         has n, :web_pages, :through => DataMapper::Resource
         
         has n, :links_to_source_scrapers, 'ScraperLink', :child_key => [:target_id]
@@ -382,10 +389,25 @@ module MicroScraper
         has n, :source_scrapers, 'Scraper', :through => :links_to_source_scrapers, :via => :source
         has n, :target_scrapers, 'Scraper', :through => :links_to_target_scrapers, :via => :target
         
-        traverse :source_scrapers, :web_pages, :regexps
-        export   :source_scrapers, :web_pages, :regexps
+        traverse :source_scrapers, :web_pages, :searches_with, :tested_by
+        export   :source_scrapers, :web_pages, :searches_with, :tested_by
       end
-      
+
+      class SearchLink
+        include DataMapper::Resource
+        
+        belongs_to :scraper, :key => true
+        belongs_to :regexp, :key => true
+      end
+
+      class TestLink
+        include DataMapper::Resource
+        
+        belongs_to :scraper, :key => true
+        belongs_to :regexp, :key => true
+      end
+
+
       class ScraperLink
         include DataMapper::Resource
         
@@ -462,19 +484,25 @@ module MicroScraper
       class Regexp
         include Resource
         
+        has n, :tests_scrapers, 'Scraper', :through => :test_links, :via => :scraper
+        has n, :test_links
+
+        has n, :searches_for_scrapers, 'Scraper', :through => :search_links, :via => :scraper
+        has n, :search_links
+
         has n, :web_pages, :through => :terminate_links
         has n, :terminate_links
 
-        has n, :scrapers,  :through => DataMapper::Resource
+        #has n, :scrapers,  :through => DataMapper::Resource
         
         property :regexp,              Text,    :required => true, :default => '.*'
         property :match_number,        Integer, :required => false
-        property :substitution,        Text,    :required => true, :default => '$0'
+        property :replacement,         Text,    :required => true, :default => '$0'
         property :case_insensitive,    Boolean, :required => true, :default => true
         property :multiline,           Boolean, :required => true, :default => false
         property :dot_matches_newline, Boolean, :required => true, :default => true
         
-        mustacheable :regexp, :substitution
+        mustacheable :regexp, :replacement
         
         # Replace blank match_number with nil.
         after :match_number= do 

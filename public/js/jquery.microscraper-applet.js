@@ -36,28 +36,18 @@
 	    if(obj) {
 		console.log(obj);
 		var $executions = $form.data(ns).elems.executions,
-		$execution = $('<tr>').addClass(obj.status),
-		$key = $('<td>').addClass('key').text(obj.name + ': '),
-		$value = $('<td>');
+		$execution = $('<tr>').addClass(obj.status);
 		
-		$value.append($('<div>').addClass('value').text(obj.value));
-		/*switch (obj.status) {
-		case 'successful':
-		    $value.append($('<div>').addClass('value').text(obj.value));
-		    break;
-		case 'in_progress':
-		    if('missing_variables' in obj) {
-			$.each(obj.missing_variables, function(missing_variable) {
-			    $value.append($('<div>').addClass('missing').text(missing_variable));
-			});
+		var key;
+		for( key in obj ) {
+		    var value;
+		    if($.isArray( obj[key] )) {
+			value = obj[key].join(', ');
+		    } else {
+			value = obj[key];
 		    }
-		    break;
-		case 'failure':
-		    $.each(obj.errors, function(error) {
-			$value.append($('<div>').addClass('error').text(error));
-		    });
-		    break;
-		}*/
+		    $execution.append($('<tr />').addClass(key).text(value));
+		}
 		$executions.prepend($execution.append($key).append($value));
 	    }
 	}
