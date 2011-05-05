@@ -1,0 +1,17 @@
+<div class="json ui-widget-content">
+  JSON (<a href="{{location}}?format=json">link</a>):<br>
+  {{#can_edit}}
+    <form action="{{options.upload_location}}" class="ajax" method="post">
+    <textarea name="json">
+      {{to_json}}
+    </textarea>
+    <button type="submit">Update</button>
+    </form>
+  {{/can_edit}}
+  {{^can_edit}}
+  <code>
+    {{to_json}}
+  </code>
+  {{/can_edit}}
+</div>
+
