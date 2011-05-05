@@ -18,11 +18,6 @@ ul {
     margin: 0px;
 }
 
-/* Execution styles. */
-.delay {
-    background: yellow;
-}
-
 /* Log styles */
 div.log {
     max-height: 200px;
@@ -41,16 +36,6 @@ div.log div.info {
     color : blue;
 }
 
-.key {
-    font-style: italic;
-}
-
-.value {
-    border: 1px solid gray;
-    max-height: 100px;
-    overflow-y: auto;
-}
-
 /* Permit inline-block forms. */
 form {
     display: inline-block;
@@ -59,16 +44,17 @@ form {
 
 /* Make elements as wide as possible. */
 textarea {
-    width: 100%;
-}
-table {
-    width: 100%;
-}
-
-/* JSON editing styles. */
-.json * textarea {
+    width : 600px;
     height: 4em;
     font-family: monospace !important;
+}
+table {
+    width: 600px;
+}
+pre {
+    width: 600px;
+    
+    overflow-x: scroll;
 }
 
 /* Make tags look better. */

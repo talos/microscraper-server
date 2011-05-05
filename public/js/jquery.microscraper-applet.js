@@ -34,21 +34,30 @@
 	},
 	addExecution : function($form, obj) {
 	    if(obj) {
-		console.log(obj);
+		//console.log(obj);
 		var $executions = $form.data(ns).elems.executions,
 		$execution = $('<tr>').addClass(obj.status);
 		
 		var key;
-		for( key in obj ) {
-		    var value;
-		    if($.isArray( obj[key] )) {
-			value = obj[key].join(', ');
+		$.each(obj, function(key, value) {
+		    var $cell = $('<td />');
+		    if($.isArray( value )) {
+			$.each( value, function( arrayNum, arrayValue ) {
+			    if($.isPlainObject( arrayValue )) {
+				$.each( arrayValue, function ( key, value ) {
+				    $cell.append ( key + ': ' + value );
+				});
+			    } else {
+				$cell.append($('<pre />').append($('<code />')
+								 .text(arrayValue)));
+			    }
+			});
 		    } else {
-			value = obj[key];
+			$cell.text(value);
 		    }
-		    $execution.append($('<tr />').addClass(key).text(value));
-		}
-		$executions.prepend($execution.append($key).append($value));
+		    $execution.append($cell);
+		});
+		$executions.prepend($execution);
 	    }
 	}
     },
@@ -77,7 +86,7 @@
 			data.options = options;
 			data.applet_elem = applet_elem;
 			data.elems = {
-			    executions : $('<table />').addClass('exeuctions'),
+			    executions : $('<table />'),
 
 			    // Add Test (submit) button
 			    test : $('<button type="submit" />').text(data.options.test),
@@ -160,7 +169,8 @@
 			    }
 			} catch (e) {
 			    if(e instanceof TypeError) {
-				console.log(e);
+				// User hasn't approved the applet yet.
+				//console.log(e);
 			    } else {
 				$.error(e);
 			    }
