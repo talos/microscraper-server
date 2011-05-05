@@ -54,6 +54,21 @@ div.log div.info {
 /* Permit inline-block forms. */
 form {
     display: inline-block;
+    width: 100%;
+}
+
+/* Make elements as wide as possible. */
+textarea {
+    width: 100%;
+}
+table {
+    width: 100%;
+}
+
+/* JSON editing styles. */
+.json * textarea {
+    height: 4em;
+    font-family: monospace !important;
 }
 
 /* Make tags look better. */
@@ -71,9 +86,6 @@ li {
 /* Hide immutable attributes. */
 .immutable {
     display: none;
-}
-textarea {
-    width: 100%;
 }
 
 /* Prevent associations from being too wide. */

@@ -207,14 +207,60 @@ module MicroScraper
       mustache :logout
     end
     
-    # Bulk upload JSON.
+    # Bulk upload JSON.  This will create a duplicate in function, but will recreate everything -- other users'
+    # resources will be replicated, rather than linked.
     post options.upload_location do
-      json = JSON.parse(params[:json])
-      json.each do |model_name, resource_hash| 
-        resource_hash.each do |resource_name, resource_values|
-          
+      begin
+        json = JSON.parse(params[:json])
+      rescue JSON::ParserError => e
+        error "Invalid JSON: #{e.message}"
+      end
+
+      # convenience function to iterate over json
+      def foreach_resource(json)
+        json.each do |model_name, resource_hash|
+          model = @db.get_model(model_name)
+          resource_hash.each do |resource_name, resource_values|
+            # we actually ignore the creator here...
+            creator, title = MicroScraper::Database::Schema::Resource.split_full_name(resource_name)
+
+            # first, check to see if a resource already exists with this title by this user, create it if it does not.
+            resource = model.first_or_new(:creator => @user, :title => title)
+            yield resource, resource_values
+            resource.save or resource_error resource
+          end
         end
       end
+
+      # first, give every resource its attributes.  this also creates resources.
+      foreach_resource(json) do |resource, resource_values|
+        resource.mutable_attributes.each do |name, value|
+          name = name.to_s
+          if resource_values.include?(name)
+            resource.send("#{name}=", resource_values[name])
+          end
+        end
+      end
+      
+      # then, add links to related resources.
+      # all related resources were created with the previous step.
+      foreach_resource(json) do |resource, resource_values|
+        resource.model.relationships.each do |relationship|
+          if resource_values.include?(relationship.name.to_s)
+            name = relationship.name.to_s
+            references = resource_values[name]
+            model = resource.send(name).model
+            references.each do |reference|
+              # again, creator is ignored -- we should've created this in the previous step
+              creator, title = MicroScraper::Database::Schema::Resource.split_full_name(reference)
+              related_resource = model.first(:creator => @user, :title => title) or error "Invalid reference to #{title}"
+              resource.send(name) << related_resource
+            end
+          end
+        end
+      end
+
+      mustache :created
     end
 
     # Try to find our model.
