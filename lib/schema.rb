@@ -507,7 +507,7 @@ module MicroScraper
         #has n, :scrapers,  :through => DataMapper::Resource
         
         property :regexp,              Text,    :required => true, :default => '.*'
-        property :match_number,        Integer, :required => false
+        property :match_number,        Integer, :required => false,:default => 0
         property :replacement,         Text,    :required => true, :default => '$0'
         property :case_insensitive,    Boolean, :required => true, :default => true
         property :multiline,           Boolean, :required => true, :default => false
