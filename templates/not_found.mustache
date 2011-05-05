@@ -1,12 +1,18 @@
-<div class="error not_found ui-widget ui-widget-content">
-  No dice!  File not found.
-  {{#options}}
-    Back
-    {{#user}}
-      <a href="{{home_location}}">home</a>.
-    {{/user}}
-    {{^user}}
-    to <a href="{{index_location}}">MicroScraper</a>.
-    {{/user}}
-  {{/options}}
-</div>
+{{#html_format}}
+  <div class="error not_found ui-widget ui-widget-content">
+    No dice!  File not found.
+    {{#options}}
+      Back
+      {{#user}}
+        <a href="{{home_location}}">home</a>.
+      {{/user}}
+      {{^user}}
+      to <a href="{{index_location}}">MicroScraper</a>.
+      {{/user}}
+    {{/options}}
+  </div>
+{{/html_format}}
+
+{{#json_format}}
+  Not found.
+{{/json_format}}

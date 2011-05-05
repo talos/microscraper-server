@@ -120,6 +120,7 @@ module MicroScraper
             property :last_editor_id, DataMapper::Property::Integer, :accessor => :private
 
             validates_with_method :check_mustacheability
+            validates_with_method :assure_editor_is_not_creator
             
             # Destroy links before destroying resource.
             before :destroy do
@@ -145,6 +146,16 @@ module MicroScraper
                 end
               end
               true
+            end
+            
+            def assure_editor_is_not_creator
+              puts editors.inspect
+              puts creator
+              if editors.include? creator
+                [ false, "creator is always an editor" ]
+              else
+                true
+              end
             end
 
             # Replaces whitespace in title with dashes, eliminate other nonalphanumerics

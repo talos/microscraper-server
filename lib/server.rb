@@ -248,12 +248,13 @@ module MicroScraper
         resource.model.relationships.each do |relationship|
           if resource_values.include?(relationship.name.to_s)
             name = relationship.name.to_s
+            
             references = resource_values[name]
             model = resource.send(name).model
             references.each do |reference|
               # again, creator is ignored -- we should've created this in the previous step
               creator, title = MicroScraper::Database::Schema::Resource.split_full_name(reference)
-              related_resource = model.first(:creator => @user, :title => title) or error "Invalid reference to #{title}"
+              related_resource = model.first(:creator => @user, :title => title) or error "Invalid reference to #{name} '#{title}'"
               resource.send(name) << related_resource
             end
           end
@@ -344,10 +345,11 @@ module MicroScraper
     
     # Create a new link.  Returns the location of the new link.  This also creates resources.
     put options.database.directory + ':model/:creator_title/:resource_title/:relationship/' do
-      # Split related resource into creator/resource components
-      if @related_model.raw_name == 'user'
+      # Bypass split for users
+      if @related_model == MicroScraper::Database::Schema::User
         @related_resource = @related_model.first(:title => params[:title]) or not_found
       else
+        # Split related resource into creator/resource components
         split_title = MicroScraper::Database::Schema::Resource.split_full_name(params[:title]) #params[:title].split('/')
         # Assume we are working with this user if no slash, try to create the resource if it doesn't exist.
         if split_title.length == 1
