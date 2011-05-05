@@ -195,15 +195,14 @@
 		data = $form.data(ns);
 		if(data) {
 		    helpers.clearExecutions( $form );
-		    var execution = data.applet.nextExecution();
-		    while( execution ) {
+		    data.applet.resetExecutionsIterator();
+		    while( data.applet.hasMoreExecutions() ) {
+			var execution = data.applet.getNextExecution();
 			helpers.addExecution( $form, $.parseJSON(execution) );
-			execution = data.applet.nextExecution();
 		    }
-		    var log = data.applet.log();
-		    while( log ) {
-			helpers.log( $form, $.parseJSON(log) );
-			log = data.applet.log();
+		    while( data.applet.hasMoreLogEntries() ) {
+			var logEntry = data.applet.getNextLogEntry();
+			helpers.log( $form, $.parseJSON(logEntry) );
 		    }
 		}
 	    });
