@@ -7,6 +7,10 @@
   <form class="ajax" method="put" action="{{location}}">
   {{/can_edit}}
    <table class="mutable attributes">
+    <caption>Attributes</caption>
+    <tr>
+      <th>Name</th><th>Value</th>
+    </tr>
     {{^can_edit}}
     {{#mutables}}
      <tr>	

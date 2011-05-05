@@ -29,12 +29,19 @@
 	    }
 	},
 	clearExecutions: function($form) {
-	    var $executions = $form.data(ns).elems.executions;
-	    $executions.empty();
+	    var $executions = $form.data(ns).elems.executions,
+	    $caption = $('<caption>').text('Executions'),
+	    $headers = $('<tr>')
+		.append($('<th>').text('Source'))
+		.append($('<th>').text('ID'))
+		.append($('<th>').text('Name'))
+		.append($('<th>').text('Value'))
+		.append($('<th>').text('Delay'))
+		.append($('<th>').text('Failure'));
+	    $executions.empty().append($caption).append($headers);
 	},
 	addExecution : function($form, obj) {
 	    if(obj) {
-		//console.log(obj);
 		var $executions = $form.data(ns).elems.executions,
 		$execution = $('<tr>').addClass(obj.status);
 		
@@ -57,7 +64,7 @@
 		    }
 		    $execution.append($cell);
 		});
-		$executions.prepend($execution);
+		$executions.append($execution);
 	    }
 	}
     },

@@ -1,6 +1,11 @@
 <div class="test ui-widget-content">
   <form class="test" method="get" action="{{location}}">
-    <table class="variables">
+    <table>
+      <caption>Substitute Values</caption>
+      <tr>
+        <th>Name</th>
+	<th>Value</th>
+      </tr>
       {{#variables}}
         <tr>
           <td><label for="{{to_s}}">{{to_s}}:</label></td>
