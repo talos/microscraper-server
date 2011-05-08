@@ -43,7 +43,8 @@ module MicroScraper
         property :immutable_name, DataMapper::Property::String, :required => true, :unique => true, :accessor => :private
         property :title, DataMapper::Property::String, :required => true, :unique => true
         
-        has n, :scrapers,   :child_key => [ :creator_id ]
+        has n, :one_to_one_scrapers,   :child_key => [ :creator_id ]
+        has n, :one_to_many_scrapers,   :child_key => [ :creator_id ]
         has n, :substitutions,   :child_key => [ :creator_id ]
         has n, :bundles,      :child_key => [ :creator_id ]
         has n, :web_pages,  :child_key => [ :creator_id ]
@@ -360,10 +361,10 @@ module MicroScraper
         include Resource
         
         has n, :bundles, :through => DataMapper::Resource
-        has n, :scrapers, :through => DataMapper::Resource
+        has n, :one_to_one_scrapers, :through => DataMapper::Resource
         
-        traverse :scrapers
-        export :scrapers
+        traverse :one_to_one_scrapers
+        export :one_to_one_scrapers
 
         property :value, String
         mustacheable :value
@@ -373,76 +374,169 @@ module MicroScraper
         include Resource
         
         has n, :substitutions, :through => DataMapper::Resource
-        has n, :scrapers, :through => DataMapper::Resource
+        has n, :one_to_one_scrapers, :through => DataMapper::Resource
+        has n, :one_to_many_scrapers, :through => DataMapper::Resource
 
-        traverse :substitutions, :scrapers
-        export :substitutions, :scrapers
+        traverse :substitutions, :one_to_many_scrapers, :one_to_one_scrapers
+        export :substitutions, :one_to_many_scrapers, :one_to_one_scrapers
       end
-      
-      class Scraper
+
+      class OneToOneScraper
+        class OneToOneSearchLink
+          include DataMapper::Resource
+          
+          belongs_to :one_to_one_scraper, :key => true
+          belongs_to :regexp, :key => true
+        end
+
+        class OneToOneTestLink
+          include DataMapper::Resource
+          
+          belongs_to :one_to_one_scraper, :key => true
+          belongs_to :regexp, :key => true
+        end
+
+        class OneToOneScraperLink
+          include DataMapper::Resource
+          
+          property :source_id, Integer, :key => true, :min => 1
+          property :target_id, Integer, :key => true, :min => 1
+
+          belongs_to :source, 'OneToOneScraper', :key => true
+          belongs_to :target, 'OneToOneScraper', :key => true
+
+          # prevent self-reference
+          validates_with_method :prevent_self_reference
+          def prevent_self_reference
+            if source_id == target_id
+              [ false, 'Scraper cannot link to itself.' ]
+            else
+              true
+            end
+          end
+        end
+
+        class OneToManyScraperLink
+          include DataMapper::Resource
+          
+          property :source_id, Integer, :key => true, :min => 1
+          property :target_id, Integer, :key => true, :min => 1
+
+          belongs_to :source, 'OneToOneScraper', :key => true
+          belongs_to :target, 'OneToManyScraper', :key => true
+        end
+        
+        include Resource
+
+        has n, :bundles, :through => DataMapper::Resource
+        
+        has 0..1, :searches_with, 'Regexp', :through => :one_to_one_search_links, :via => :regexp
+        has 0..1, :one_to_one_search_links
+
+        property :match_number,        Integer, :required => true, :default => 0
+        property :replacement,         Text,    :required => true, :default => '$0'
+
+        has n, :tested_by, 'Regexp', :through => :test_links, :via => :regexp
+        has n, :test_links
+
+        has 0..1, :web_pages, :through => DataMapper::Resource
+        
+        has 0..1, :links_to_one_to_one_source_scrapers, 'OneToOneScraperLink', :child_key => [:target_id]
+        has n, :links_to_one_to_one_target_scrapers, 'OneToOneScraperLink', :child_key => [:source_id]
+        
+        has 0..1, :one_to_one_source_scrapers, 'OneToOneScraper', :through => :links_to_one_to_one_source_scrapers, :via => :source
+        has n, :one_to_one_target_scrapers, 'OneToOneScraper', :through => :links_to_one_to_one_target_scrapers, :via => :target
+
+        has 0..1, :links_to_one_to_many_source_scrapers, 'OneToOneScraperLink', :child_key => [:target_id]
+        has n, :links_to_one_to_many_target_scrapers, 'OneToOneScraperLink', :child_key => [:source_id]
+        
+        has 0..1, :one_to_many_source_scrapers, 'OneToOneScraper', :through => :links_to_one_to_many_source_scrapers, :via => :source
+        has n, :one_to_many_target_scrapers, 'OneToOneScraper', :through => :links_to_one_to_many_target_scrapers, :via => :target
+        
+        traverse :one_to_many_source_scrapers, :one_to_one_source_scrapers, :web_pages, :searches_with, :tested_by
+        export   :one_to_many_source_scrapers, :one_to_one_source_scrapers, :web_pages, :searches_with, :tested_by
+      end
+
+      class OneToManyScraper
+        class OneToManySearchLink
+          include DataMapper::Resource
+          
+          belongs_to :one_to_many_scraper, :key => true
+          belongs_to :regexp, :key => true
+        end
+
+        class OneToManyTestLink
+          include DataMapper::Resource
+          
+          belongs_to :one_to_many_scraper, :key => true
+          belongs_to :regexp, :key => true
+        end
+
+        class OneToOneScraperLink
+          include DataMapper::Resource
+          
+          property :source_id, Integer, :key => true, :min => 1
+          property :target_id, Integer, :key => true, :min => 1
+
+          belongs_to :source, 'OneToManyScraper', :key => true
+          belongs_to :target, 'OneToOneScraper', :key => true
+        end
+
+        class OneToManyScraperLink
+          include DataMapper::Resource
+          
+          property :source_id, Integer, :key => true, :min => 1
+          property :target_id, Integer, :key => true, :min => 1
+
+          belongs_to :source, 'OneToManyScraper', :key => true
+          belongs_to :target, 'OneToManyScraper', :key => true
+
+          # prevent self-reference
+          validates_with_method :prevent_self_reference
+          def prevent_self_reference
+            if source_id == target_id
+              [ false, 'Scraper cannot link to itself.' ]
+            else
+              true
+            end
+          end
+        end
+        
         include Resource
         
         has n, :bundles, :through => DataMapper::Resource
         
-        #has n, :regexps,   :through => DataMapper::Resource
-        
-        has n, :searches_with, 'Regexp', :through => :search_links, :via => :regexp
-        has n, :search_links
-        
-        has n, :tested_by, 'Regexp', :through => :test_links, :via => :regexp
-        has n, :test_links
+        has 0..1, :searches_with, 'Regexp', :through => :one_to_many_search_links, :via => :regexp
+        has 0..1, :one_to_many_search_links
 
-        has n, :web_pages, :through => DataMapper::Resource
+        property :replacement,         Text,    :required => true, :default => '$0'
         
-        has n, :links_to_source_scrapers, 'ScraperLink', :child_key => [:target_id]
-        has n, :links_to_target_scrapers, 'ScraperLink', :child_key => [:source_id]
+        has n, :tested_by, 'Regexp', :through => :one_to_many_test_links, :via => :regexp
+        has n, :one_to_many_test_links
+
+        has 0..1, :web_pages, :through => DataMapper::Resource
         
-        has n, :source_scrapers, 'Scraper', :through => :links_to_source_scrapers, :via => :source
-        has n, :target_scrapers, 'Scraper', :through => :links_to_target_scrapers, :via => :target
+        has 0..1, :links_to_one_to_one_source_scrapers, 'OneToOneScraperLink', :child_key => [:target_id]
+        has n, :links_to_one_to_one_target_scrapers, 'OneToOneScraperLink', :child_key => [:source_id]
         
-        traverse :source_scrapers, :web_pages, :searches_with, :tested_by
-        export   :source_scrapers, :web_pages, :searches_with, :tested_by
+        has 0..1, :one_to_one_source_scrapers, 'OneToOneScraper', :through => :links_to_one_to_one_source_scrapers, :via => :source
+        has n, :one_to_one_target_scrapers, 'OneToOneScraper', :through => :links_to_one_to_one_target_scrapers, :via => :target
+
+        has 0..1, :links_to_one_to_many_source_scrapers, 'OneToOneScraperLink', :child_key => [:target_id]
+        has n, :links_to_one_to_many_target_scrapers, 'OneToOneScraperLink', :child_key => [:source_id]
+        
+        has 0..1, :one_to_many_source_scrapers, 'OneToOneScraper', :through => :links_to_one_to_many_source_scrapers, :via => :source
+        has n, :one_to_many_target_scrapers, 'OneToOneScraper', :through => :links_to_one_to_many_target_scrapers, :via => :target
+
+        traverse :one_to_one_source_scrapers, :one_to_many_source_scrapers, :web_pages, :searches_with, :tested_by
+        export   :one_to_one_source_scrapers, :one_to_many_source_scrapers, :web_pages, :searches_with, :tested_by
       end
 
-      class SearchLink
-        include DataMapper::Resource
-        
-        belongs_to :scraper, :key => true
-        belongs_to :regexp, :key => true
-      end
-
-      class TestLink
-        include DataMapper::Resource
-        
-        belongs_to :scraper, :key => true
-        belongs_to :regexp, :key => true
-      end
-
-
-      class ScraperLink
-        include DataMapper::Resource
-        
-        property :source_id, Integer, :key => true, :min => 1
-        property :target_id, Integer, :key => true, :min => 1
-
-        belongs_to :source, 'Scraper', :key => true
-        belongs_to :target, 'Scraper', :key => true
-
-        # prevent self-reference
-        validates_with_method :prevent_self_reference
-        def prevent_self_reference
-          if source_id == target_id
-            [ false, 'Scraper cannot link to itself.' ]
-          else
-            true
-          end
-        end
-      end
-      
       class WebPage
         include Resource
         
-        has n, :scrapers, :through => DataMapper::Resource
+        has n, :one_to_one_scrapers, :through => DataMapper::Resource
+        has n, :one_to_many_scrapers, :through => DataMapper::Resource
         
         has n, :terminates, 'Regexp', :through => :terminate_links, :via => :regexp
         has n, :terminate_links
@@ -495,20 +589,24 @@ module MicroScraper
       class Regexp
         include Resource
         
-        has n, :tests_scrapers, 'Scraper', :through => :test_links, :via => :scraper
-        has n, :test_links
+        has n, :tests_one_to_one_scrapers, 'OneToOneScraper', :through => :test_one_to_one_links, :via => :one_to_one_scraper
+        has n, :test_one_to_one_links
 
-        has n, :searches_for_scrapers, 'Scraper', :through => :search_links, :via => :scraper
-        has n, :search_links
+        has n, :searches_for_one_to_one_scrapers, 'OneToOneScraper', :through => :search_one_to_one_links, :via => :one_to_one_scraper
+        has n, :search_one_to_one_links
+
+        has n, :tests_one_to_many_scrapers, 'OneToManyScraper', :through => :test_one_to_many_links, :via => :one_to_many_scraper
+        has n, :test_one_to_many_links
+
+        has n, :searches_for_one_to_many_scrapers, 'OneToManyScraper', :through => :search_one_to_many_links, :via => :one_to_many_scraper
+        has n, :search_one_to_many_links
 
         has n, :web_pages, :through => :terminate_links
         has n, :terminate_links
 
-        #has n, :scrapers,  :through => DataMapper::Resource
-        
         property :regexp,              Text,    :required => true, :default => '.*'
-        property :match_number,        Integer, :required => false,:default => 0
-        property :replacement,         Text,    :required => true, :default => '$0'
+        #property :match_number,        Integer, :required => false,:default => 0
+        #property :replacement,         Text,    :required => true, :default => '$0'
         property :case_insensitive,    Boolean, :required => true, :default => true
         property :multiline,           Boolean, :required => true, :default => false
         property :dot_matches_newline, Boolean, :required => true, :default => true
@@ -516,9 +614,9 @@ module MicroScraper
         mustacheable :regexp, :replacement
         
         # Replace blank match_number with nil.
-        after :match_number= do 
-          send(:match_number=, nil) if match_number == ''
-        end
+        # after :match_number= do 
+        #   send(:match_number=, nil) if match_number == ''
+        # end
         
         # Validate regular expression format, standardize how regexp looks.
         validates_with_method :validate_regexp
