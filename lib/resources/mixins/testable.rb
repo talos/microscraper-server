@@ -14,17 +14,40 @@ module MicroScraper
     #           }
     #      }
     #   }
+    # By default, all public accessible attributes are serialized.  Relationships must
+    # be specified as follows
+    # @example
+    #   class Bar
+    #     include DataMapper::Resource
+    #     
+    #     property :id, Serial
+    #   end
+    #
+    #   class Foo
+    #     include DataMapper::Resource
+    #     include Serializable
+    #     
+    #     property :id, Serial
+    #     has n, :bars
+    #
+    #     serialize :bars
+    #   end
+    
     module Serializable
       def self.included(base)
         base.class_eval do
           include Resource
-
-          @test = Array.new
+          
+          @serialize = Array.new
         end
       end
 
-      
-      def export
+      # @params [*Symbol]
+      def self.serialize(*relationship_names)
+
+      end
+
+      def serialize
         resources = related_resources.push(self)
         dest = {}
         

@@ -6,7 +6,8 @@ require '/lib/resources/user'
 module MicroScraper
   module Resources
     
-    # Editable resources belong to a creator and editors.  They can only be modified by a creator.
+    # Editable resources belong to a creator.
+    # They can only be saved by a creator or an editor.
     module Editable
       def self.included(base)
         base.class_eval do
@@ -46,7 +47,8 @@ module MicroScraper
           
           orig_save = instance_method :save
 
-          # Force save to be done by a user
+          # The resource must be saved by a specific user.
+          # @param [MicroScraper::Resources::User] the user who is trying to save
           def save (user)
             if(editable_by? user)
               orig_save
