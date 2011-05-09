@@ -7,7 +7,7 @@ require 'addressable/template'
 module MicroScraper
   module Resources
 
-    # Locatable resources can generate a relative URI, and must have a title.
+    # Locatable resources have a Serial ID, can generate a relative URI, and must have a title.
     # The URI is generated using #{DEFAULT_MODEL} and #{DEFAULT_RESOURCE}
     module Locatable
       
@@ -60,7 +60,7 @@ module MicroScraper
         # @param [String] within_value Optional value of property which the resource is within
         # @return [Addressable::URI] absolute path to resource
         def expand_resource(model, title, within_value = nil)
-          @resource.expand(:model => DataMapper::Inflector.demodulize(model))
+          @resource.expand(:model => DataMapper::Inflector.demodulize(model), :title => title, :within => within_value.to_a)
         end
       end
 
@@ -79,11 +79,11 @@ module MicroScraper
       
       def self.included(base)
         base.class_eval do
-          include Resource
+          include DataMapper::Resource
           
-          property :id,   Serial, :accessor => :private
-          property :title, String, :required => true, :unique_index => :uindex
-          property :deleted_at, ParanoidDateTime, :writer => :private, :unique_index => :uindex
+          property :id,   DataMapper::Property::Serial, :accessor => :private
+          property :title, DataMapper::Property::String, :required => true, :unique_index => :uindex
+          property :deleted_at, DataMapper::Property::ParanoidDateTime, :writer => :private, :unique_index => :uindex
           
           # Replace whitespaces with a dash, eliminate nonalphanumerics from title.
           before :save do 
@@ -92,7 +92,14 @@ module MicroScraper
           end
 
           # Keep track of our locatable models.
-          @@locatables[@@template.expand_model(base)] << base
+          @@locatables[@@template.expand_model(base)] = base
+
+          # Obtain an absolute path to the resource's model.
+          # @param (see #location)
+          # @return [Addressable::URI] an absolute path to the model.
+          def self.location(template = @@template)
+            template.expand_model(self)
+          end
         end
       end
       
@@ -107,18 +114,16 @@ module MicroScraper
         send(relationship).get_attribute(property)
       end
 
-      # Obtain an absolute path to the resource's model.
-      # @param (see #location)
-      # @return [Addressable::URI] an absolute path to the model.
-      def self.location(template = @@template)
-        template.expand_model(self)
-      end
 
       # Obtain an absolute path the resource.
       # @param [MicroScraper::Resources::Locatable::LocatableTemplate] template Optional alternate template.
       # @return [Addressable::URI] an absolute path to the resource.
       def location(template = @@template)
-        template.expand_resource(self)
+        if @within_relationship
+          template.expand_resource(self.model, self.title, send(@within_relationship).attribute_get(@within_property))
+        else
+          template.expand_resource(self.model, self.title)
+        end
       end
       
       # Obtain a Locatable resource model from a URI.
