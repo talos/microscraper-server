@@ -77,7 +77,7 @@ module MicroScraper
       # A hash of all locatable classes, keyed by their location.
       @@locatables = Hash.new
       
-      @@template = Template.new ({ :model => DEFAULT_MODEL, :resource => DEFAULT_RESOURCE })
+      @@template = Template.new({ :model => DEFAULT_MODEL, :resource => DEFAULT_RESOURCE })
       
       def self.included(base)
         base.class_eval do
