@@ -5,10 +5,11 @@ module MicroScraper::Resource::Mixin
   shared_examples_for 'editable resource' do
     it_should_behave_like 'resource mixin'
     
+    def generate_user
+      MicroScraper::Resource::User.new
+    end
+    
     before(:each) do
-      def generate_user
-        MicroScraper::Resource::User.new
-      end
       @creator = generate_user
       @resource.creator = @creator
 
@@ -20,10 +21,10 @@ module MicroScraper::Resource::Mixin
     
     it 'must be saved by a User' do
       @resource.should_not respond_to(:save).with(0).argument
-      @someone.save(@creator).should_not raise_error
+      @creator.save(@resource).should_not raise_error
     end
     
-    it 'belongs_to a User "creator"' do
+    it 'has a creator' do
       @resource.creator.should eq(@creator)
     end
 
