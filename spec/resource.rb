@@ -13,28 +13,53 @@ module MicroScraper::Resource
       how_many.times.collect { klass.generate }
     end
     
-    before(:each) do
-      @model = subject
-      @resource = subject.new
+    # Helper method to find path to this resource
+    # @return [String] path within 'resource' directory for this file
+    # @example
+    #   resource_path #=> "./resource/web_page"
+    def resource_path
+      '.' + Dir[File.dirname(__FILE__)][/\/resource\/.*/]
     end
     
-    it 'is a DataMapper model' do
-      @model.should be_a(DataMapper::Model)
-    end
+    let(:model)      { subject }
+    let(:collection) { subject.all }
+    let(:instance)   { subject.new }
 
-    it 'produces a DataMapper resource' do
-      @resource.should be_a(DataMapper::Resource)
-    end
-
-    it 'is a sweatshop' do
-      @model.should respond_to(:generate)
-      @model.should respond_to(:make)
-      @model.should respond_to(:gen)
+    after(:each) do
+      if instance
+        instance.destroy!
+      end
     end
     
-    it 'produces valid resources' do
-      @model.make.valid?.should be_true
-      @model.generate.should be_instance_of(@resource.class)
+    describe 'model' do
+      subject { model }
+      it { should be_a(DataMapper::Model) }
+      
+      it 'should behave like a sweatshop' do
+        should respond_to(:generate)
+        should respond_to(:make)
+        should respond_to(:gen)
+      end
+
+      describe '#make' do
+        it 'makes valid instances' do
+          model.make.valid?.should be_true
+        end
+
+        it 'makes instances of correct class' do
+          model.generate.should be_instance_of(instance.class)
+        end
+      end
+    end
+    
+    describe 'collection' do
+      subject { collection }
+      it { should be_a(DataMapper::Collection) }
+    end
+
+    describe 'instance' do
+      subject { instance }
+      it { should be_a(DataMapper::Resource) }
     end
   end
 end

@@ -5,66 +5,92 @@ module MicroScraper::Resource::Mixin
   shared_examples_for 'editable resource' do
     it_should_behave_like 'resource mixin'
     
-    def generate_user
-      MicroScraper::Resource::User.new
+    let(:user_model) { MicroScraper::Resource::User }
+    let(:generate_user) { user_model.new }
+    let(:creator) { generate_user }
+    let(:editors) { reps.times.collect { generate_user } }
+    let(:rando)   { generate_user }
+
+    around(:each) do |test|
+      resource.creator = creator
+      resource.editors << editors
+      test.run
     end
     
-    before(:each) do
-      @creator = generate_user
-      @resource.creator = @creator
-
-      @editors = 5.times.collect { generate_user }
-      @resource.editors << @editors
+    describe 'editable resource' do
+      subject { resource }
       
-      @rando = generate_user
-    end
-    
-    it 'must be saved by a User' do
-      @resource.should_not respond_to(:save).with(0).argument
-      @creator.save(@resource).should_not raise_error
-    end
-    
-    it 'has a creator' do
-      @resource.creator.should eq(@creator)
-    end
-
-    it 'has n User "editors"' do
-      @resource.editors.should include(*@editors)
-      @editors.each do |editor|
-        @resource.editors.should include(editor)
+      describe :creator do
+        subject { resource.creator }
+        should be_a(user_model)
       end
-    end
-
-    it 'can be saved by its creator' do
-      @creator.save(@resource).should be_true
-    end
-
-    it 'can be saved by its editors' do
-      @editors.each do |editor|
-        editor.save(@resource).should be_true
+      
+      describe '#creator=' do
+        it 'raises an exception when the creator is reassigned' do
+          expect {
+            resource.creator = rando
+          }.to raise_error
+        end
       end
-    end
+      
+      describe '#destroy' do
+        it { should_not respond_to(:destroy) }
+      end
+      
+      describe :editors do
+        subject { resource.editors }
+        
+        it { should eq(editors) }
+        
+        it 'raises an exception when the creator is added as another editor' do
+          expect {
+            resource.editors << creator
+            creator.save(resource)
+          }.to raise_error
+        end
+      end
 
-    it 'does not save when someone random tries to save it' do
-      @rando.save(@resource).should_not be_true
-    end
-    
-    it 'raises an exception when someone random tries to save it' do
-      @rando.save(@resource).should raise_error
-    end
-    
-    it 'raises an exception when the creator is added as another editor' do
-      expect {
-        @resource.editors << @creator
-        @creator.save(@resource)
-      }.to raise_error
-    end
+      describe '#save' do
+        it { should_not respond_to(:save) }
+      end
+      
+      describe 'saving the editable' do
+        it 'can be saved by its creator' do
+          expect { creator.save(resource) }.to_not raise_error
+        end
+        
+        it 'can be saved by its editors' do
+          editors.each do |editor|
+            expect { editor.save(resource) }.to_not raise_error
+          end
+        end
+        
+        it 'raises a SecurityError when someone random tries to save it' do
+          expect { rando.save(resource) }.to raise_error { |error|
+            error.should be_a(SecurityError)
+          }
+        end
+      end
+      
+      describe 'destroying the editable' do
+        it 'can be destroyed by its creator' do
+          expect { creator.destroy(resource) }.to_not raise_error
+        end
+        
+        it 'raises a SecurityError when an editor tries to destroy it' do
+          editors.each do |editor|
+            expect { editor.save(resource) }.to raise_error { |error|
+              error.should be_a(SecurityError)
+            }
+          end
+        end
 
-    it 'raises an exception when the creator is reassigned' do
-      expect {
-        @resource.creator = @rando
-        @creator.save(@resource)
-      }.to raise_error
+        it 'raises a SecurityError when someone random tries to destroy it' do
+          expect { rando.destroy(resource) }.to raise_error { |error|
+            error.should be_a(SecurityError)
+          end
+        end
+      end
     end
   end
 end
