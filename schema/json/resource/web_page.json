@@ -1,0 +1,36 @@
+
+{
+    "description" : "A MicroScraper scrapeable web page",
+    "type" : "object",
+    "properties" : {
+	"url" : {
+	    "type" : "string",
+	    "format" : "uri",
+	    "required" : true
+	},
+	"posts" : {
+	    "type" : "array",
+	    "items" : {
+		"type" : { "$ref" : "./post.json" }
+	    }
+	},
+	"cookies" : {
+	    "type" : "array",
+	    "items" : {
+		"type" : { "$ref" : "./cookie.json" }
+	    }
+	},
+	"headers" : {
+	    "type" : "array",
+	    "items" : {
+		"type" : { "$ref" : "./header.json" }
+	    }
+	},
+	"load-before" : {
+	    "type" : "array",
+	    "items" : {
+		"type" : { "$ref" : "{$ref}" }
+	    }
+	}
+    }
+}
