@@ -2,4 +2,4 @@
 # in spec/resource/web_page.rb , it would require 'lib/resource/web_page'
 
 require 'rspec'
-
+require 'rspec-collection'

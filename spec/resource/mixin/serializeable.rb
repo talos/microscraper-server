@@ -35,20 +35,28 @@ module MicroScraper::Resource::Mixin::Serializeable
       subject { model }
       
       describe :fixtures do
-        subject { model.fixtures }
+        subject { fixtures }
         it { should be_an(Array) }
-      end
 
+        it 'is composed of json-able strings' do 
+          expect {
+            fixtures.each do |fixture|
+              JSON.parse fixture
+            end
+          }.to_not raise_error(JSON
+      end
+      
       describe :json_schema do
         subject { instance.json_schema }
         it { should be_a(Hash) }
       end
-
+      
       describe '#from_json' do
-        json_array = model.fixtures.collect { |fixture| fixture.to_s }.to_json
-        expect {
-          model.from_json(json_array)
-        }.to be_an(Array)
+        model.fixtures.each do |fixture|
+          expect {
+            model.from_json(fixture)
+          }.to be_an(Array)
+        end
       end
     end
   end
