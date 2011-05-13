@@ -37,13 +37,10 @@ module MicroScraper::Resource::Mixin::Serializeable
       describe :fixtures do
         subject { fixtures }
         it { should be_an(Array) }
-
-        it 'is composed of json-able strings' do 
-          expect {
-            fixtures.each do |fixture|
-              JSON.parse fixture
-            end
-          }.to_not raise_error(JSON
+        it 'is all strings' do
+          should all_be { |fixture| fixture.class == String }
+        end
+        
       end
       
       describe :json_schema do
