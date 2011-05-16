@@ -4,29 +4,27 @@
     "type" : "object",
     "properties" : {
 	"url" : {
+	    "description" : "The requested URL, which is mustached.",
 	    "type" : "string",
 	    "format" : "uri",
 	    "required" : true
 	},
+	"method" : {
+	    "description": "The HTTP method to use.",
+	    "type" : "string",
+	    "enum" : ["head", "get", "post"],
+	    "default" : "get"
+	},
 	"posts" : {
-	    "type" : "array",
-	    "items" : {
-		"type" : { "$ref" : "./post.json" }
-	    }
+	    "type" : "object"
 	},
 	"cookies" : {
-	    "type" : "array",
-	    "items" : {
-		"type" : { "$ref" : "./cookie.json" }
-	    }
+	    "type" : "object"
 	},
 	"headers" : {
-	    "type" : "array",
-	    "items" : {
-		"type" : { "$ref" : "./header.json" }
-	    }
+	    "type" : "object"
 	},
-	"load-before" : {
+	"loadBefore" : {
 	    "type" : "array",
 	    "items" : {
 		"type" : { "$ref" : "{$ref}" }

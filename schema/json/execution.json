@@ -1,0 +1,19 @@
+
+{
+    "ref" : "execution",
+    "description" : "A scraper execution, with an optional name."
+
+    "properties" : {
+	"parser" : {
+	    "description" : "The parser used by this execution.",
+	    "additionalProperties" : { "$ref" : "resource/parser" },
+	    "required" : true
+	},
+	"name" : {
+	    "description" : "An optional mustache substitution to make with the results of this execution.",
+	    "type"     : "string",
+	    "required" : false
+	}
+    },
+    "additionalProperties" : false
+}

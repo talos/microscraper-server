@@ -1,139 +1,161 @@
+
 {
-    "WebPagePost":[
+    "ref" : "Charlotte Crime Scraper with Agreement",
+    "source": {
+	"ref": "Charlotte-PD-Agreement-Page",
+	"method":"get",
+	"url": "http://maps.cmpdweb.org/cmpdnet/agreement.aspx?ref=map"
+    },
+    "variables" : {
+	"parser" : "Find-ASP.Net-Viewstate",
+	"match"  : 0,
+	"name"   : "Agreement Viewstate"
+    }
+    "parsers" : [
 	{
-	    "ref": "Charlotte-PD-Map-Load",
-	    "url": "http://maps.cmpdweb.org/cmpdnet/map.aspx",
-	    "posts": {
-		"__VIEWSTATE": "{{Agreement Viewstate}}",
-		"btnAgree":    "Accept",
-		"txtError":    ""
-	    },
-	    "links": [{
-		"to"  : "Find-ASP.Net-Viewstate",
-		"name": "Map Viewstate"
-	    }]
-	},
-	{
-	    "ref": "Charlotte-PD-Map-Data",
-	    "url": "http://maps.cmpdweb.org/cmpdnet/map.aspx",
-	    "posts": {
-		"__EVENTTARGET": "",
-		"__EVENTARGUMENT": "",
-		"dgrResults__PAGENUM": "{{Page Number}}",
-		"ddlBuffer": "{{Select Radius}}",
-		"ddlActive": "Reported Incidents",
-		"ImsMapVB1:tool": "SELECT",
-		"ImsMapVB1:cmd" : "SELECT",
-		"ImsMapVB1:minx" : "{{Minimum X}}",
-		"ImsMapVB1:miny" : "{{Minimum Y}}",
-		"ImsMapVB1:maxx" : "{{Maximum X}}",
-		"ImsMapVB1:maxy" : "{{Maximum Y}}",
-		"ImsMapVB1:xCoords" : "",
-		"ImsMapVB1:yCoords" : "",
-		"ImsMapVB1:selY" : "{{Selection Y}}",
-		"ImsMapVB1:legURL" : "",
-		"ImsMapVB1:txtCanEdit" : "false",
-		"ImsMapVB1:txtPrevExtent" : "1340780.66228902:460979.1:1580483.03728902:652741",
-		"UAQuery_show" : "none",
-		"txtQueryDateFrom" : "{{Start Date}}",
-		"txtQueryDateTo" : "{{End Date}}",
-		"UALayers_show" : "none",
-		"cbLayers:0" : "on",
-		"cbLayers:2" : "on",
-		"cbLayers:3" : "on",
-		"cbLayers:4" : "on",
-		"cbLayers:5" : "on",
-		"UALegend_show" : "none",
-		"UALocate_show" : "none",
-		"SearchTool1:AddlSearches" : "",
-		"UAResults_show" : "inline",
-		"txtLanguage" : "en-US"
-	    },
-	    "links": [{
-		"to"  : "Find-Charlotte-Results-Table",
-		"name": "Charlotte-Results-Table"
-	    }]
-	}
-    ],
-    "WebPageGet": [
-	{
-	    "ref": "Charlotte-PD-Agreement-Page",
-	    "url": "http://maps.cmpdweb.org/cmpdnet/agreement.aspx?ref=map",
-	    "links":[{
-		"to"  : "Find-ASP.Net-Viewstate",
-		"name": "Agreement Viewstate"
-	    }]
-	}
-    ],
-    "ScraperOneToOne": [
-	{
-	    "ref": "Find-ASPNET-Viewstate",
+	    "ref": "Find-ASP.Net-Viewstate",
 	    "pattern": "__VIEWSTATE\"\\s+value\\s*=\\s*\"([^\"]*)\"",
 	    "replacement": "\\1"
-	},
-	{
-	    "ref": "Find-Charlotte-Results-Table",
-	    "pattern": "<div\\s+id\\s*=\\s*\"dgrResults_page\".*?/div>",
-	    "replacement": "\\0",
-	    "links": [
-		{
-		    "to"  : "Find-Charlotte-Crime-Table",
-		    "name": "Charlotte-Crime-Table"
-		},
-		{
-		    "to"  : "Find-Charlotte-Crime-Complaint-No",
-		    "name": "Charlotte-Crime-Complaint-No"
-		},
-		{
-		    "to"  : "Find-Charlotte-Crime-Date-Reported",
-		    "name": "Charlotte-Crime-Date-Reported"
-		},
-		{
-		    "to"  : "Find-Charlotte-Crime-Street-Block",
-		    "name": "Charlotte-Crime-Street-Block"
-		},
-		{
-		    "to"  : "Find-Charlotte-Crime-Incident-Type",
-		    "name": "Charlotte-Crime-Incident-Type"
-		},
-		{
-		    "to"  : "Find-Charlotte-Crime-Clearance-Status",
-		    "name": "Charlotte-Crime-Clearance-Status"
-		}
-	    ]
-	},
-	{
-	    "ref": "Find-Charlotte-Crime-Complaint-No",
-	    "pattern": "<td>(.*?)</td>",
-	    "matchNumber": 0
-	},
-	{
-	    "ref": "Find-Charlotte-Crime-Date-Reported",
-	    "pattern": "<td>(.*?)</td>",
-	    "matchNumber": 1
-	},
-	{
-	    "ref": "Find-Charlotte-Crime-Street-Block",
-	    "pattern": "<td>(.*?)</td>",
-	    "matchNumber": 2
-	},
-	{
-	    "ref": "Find-Charlotte-Crime-Incident-Type",
-	    "pattern": "<td>(.*?)</td>",
-	    "matchNumber": 3
-	},
-	{
-	    "ref": "Find-Charlotte-Crime-Clearance-Status",
-	    "pattern": "<td>(.*?)</td>",
-	    "matchNumber": 4
 	}
     ],
-    "ScraperOneToMany": [
+    "pipes" : [ "Charlotte Crime Scraper without Agreement" ],
+    "scrapers" : [
 	{
-	    "ref": "Find-Charlotte-Crime-Row",
-	    "pattern": "<tr>\\s+<td>.*?</td>\\s+</tr>",
-	    "replacement": "\\0",
-	    "matchRange" : [1, -1]
+	    "ref" : "Charlotte Crime Scraper without Agreement",
+	    "source" : {
+		"ref": "Charlotte-PD-Map-Load",
+		"method":"post",
+		"url": "http://maps.cmpdweb.org/cmpdnet/map.aspx",
+		"posts": {
+		    "__VIEWSTATE": "{{Agreement Viewstate}}",
+		    "btnAgree":    "Accept",
+		    "txtError":    ""
+		}
+	    },
+	    "variables" : [
+		{
+		    "parser" : "Find-ASP.Net-Viewstate",
+		    "match"  : 0,
+		    "name"   : "Map Viewstate"
+		}
+	    ],
+	    "parsers" : [
+		{
+		    "ref": "Find-ASP.Net-Viewstate",
+		    "pattern": "__VIEWSTATE\"\\s+value\\s*=\\s*\"([^\"]*)\"",
+		    "replacement": "\\1"
+		}
+	    ],
+	    "pipes" : [ "Charlotte Crime Map" ],
+	    "scrapers" : [
+		{
+		    "ref" : "Charlotte Crime Map",
+		    "source" : 	{
+			"ref": "Charlotte-PD-Map-Data",
+			"method":"post",
+			"url": "http://maps.cmpdweb.org/cmpdnet/map.aspx",
+			"posts": {
+			    "__EVENTTARGET": "",
+			    "__EVENTARGUMENT": "",
+			    "__VIEWSTATE": "{{Map Viewstate}}",
+			    "dgrResults__PAGENUM": "{{Page Number}}",
+			    "ddlBuffer": "{{Select Radius}}",
+			    "ddlActive": "Reported Incidents",
+			    "ImsMapVB1:tool": "SELECT",
+			    "ImsMapVB1:cmd" : "SELECT",
+			    "ImsMapVB1:minx" : "{{Minimum X}}",
+			    "ImsMapVB1:miny" : "{{Minimum Y}}",
+			    "ImsMapVB1:maxx" : "{{Maximum X}}",
+			    "ImsMapVB1:maxy" : "{{Maximum Y}}",
+			    "ImsMapVB1:xCoords" : "",
+			    "ImsMapVB1:yCoords" : "",
+			    "ImsMapVB1:selY" : "{{Selection Y}}",
+			    "ImsMapVB1:legURL" : "",
+			    "ImsMapVB1:txtCanEdit" : "false",
+			    "ImsMapVB1:txtPrevExtent" : "1340780.66228902:460979.1:1580483.03728902:652741",
+			    "UAQuery_show" : "none",
+			    "txtQueryDateFrom" : "{{Start Date}}",
+			    "txtQueryDateTo" : "{{End Date}}",
+			    "UALayers_show" : "none",
+			    "cbLayers:0" : "on",
+			    "cbLayers:2" : "on",
+			    "cbLayers:3" : "on",
+			    "cbLayers:4" : "on",
+			    "cbLayers:5" : "on",
+			    "UALegend_show" : "none",
+			    "UALocate_show" : "none",
+			    "SearchTool1:AddlSearches" : "",
+			    "UAResults_show" : "inline",
+			    "txtLanguage" : "en-US"
+			},
+			"variables" : [
+			    {
+				"parser": "Find-Charlotte-Results-Table",
+				"match" : 0,
+				"leaves": [
+				    {
+					"parser" : "Find-Row-Content",
+					"name"   : "{{Crime Row}}",
+					"min"    : 1,
+					"max"    : 2,
+					"pipes"  : ["Charlotte-Crime-Row"]
+				    }
+				]
+			    }
+			],
+			"parsers" : [
+ 			    {
+				"ref": "Find-Charlotte-Results-Table",
+				"pattern": "<div\\s+id\\s*=\\s*\"dgrResults_page\".*?/div>",
+				"replacement": "\\0"
+			    },
+			    {
+				"ref": "Find-Row-Content",
+				"pattern": "<tr(.*?)</tr>",
+				"replacement": "\\1"
+			    }
+			],
+			"scrapers": [
+			    {
+				"ref" : "Charlotte-Crime-Row",
+				"source" : "{{Crime Row}}",
+				"variables" : [
+				    {
+					"parser" : "Find-Cell-Content",
+					"match"  : 0,
+					"name"   : "Complaint Number"
+				    },
+				    {
+					"parser" : "Find-Cell-Content",
+					"match"  : 1,
+					"name"   : "Date Reported"
+				    },
+				    {
+					"parser" : "Find-Cell-Content",
+					"match"  : 2,
+					"name"   : "Street Block"
+				    },
+				    {
+					"parser" : "Find-Cell-Content",
+					"match"  : 3,
+					"name"   : "Incident Type"
+				    },
+				    {
+					"parser" : "Find-Cell-Content",
+					"match"  : 4,
+					"name"   : "Clearance Status"
+				    }
+				],
+				"parsers" : [{
+				    "ref": "Find-Cell-Content",
+				    "pattern": "<td(.*?)</td>",
+				    "replacement": "\\1"
+				}]
+			    }
+			]
+		    }
+		}
+	    ]
 	}
     ]
 }

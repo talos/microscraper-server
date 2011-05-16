@@ -1,0 +1,17 @@
+
+{
+    "id" : "variable",
+    "extends" : "../execution",
+    "description" : "A one-to-one execution that can link to other executions, both variables and leaves.  It cannot be piped, although its value would be exported were its parents scraper to be piped.",
+    
+    "properties" : {
+	"match" : {
+	    "type" : "integer",
+	    "description" : "A variable can be pulled from only a single scraper match.",
+	    "required" : true
+	}
+    },
+    "additionalProperties" : {
+	"extends" : ["../has_leaves", "../has_variables"]
+    }
+}

@@ -1,0 +1,14 @@
+
+{
+    "id" : "has_variables",
+    "description" : "Permits connections to an execution variable.",
+    
+    "properties": {
+	"variables": {
+	    "type" : "array",
+	    "items" : {
+		"additionalProperties" : { "$ref" : "execution/variable" }
+	    }
+	}
+    }
+}

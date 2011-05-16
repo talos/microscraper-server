@@ -1,0 +1,7 @@
+
+{
+    "id" : "reference",
+    "description" : "A reference to a microscraper resource."
+    
+    "type" : "string"
+}

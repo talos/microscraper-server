@@ -1,0 +1,28 @@
+
+{
+    "id"  : "scraper",
+    "extends" : "../resource",
+    "description" : "A scraper contains a source string or web page, a set of parsers, and a set of linked variables and branches.",
+    
+    "properties" : {
+	"source" : {
+	    "description" : "The source of data for this scraper.  Either the body of a web page or a mustacheable string.",
+	    "type"        : ["string", "object"],
+	    "additionalProperties" : { "$ref" : "page/body" }
+	},
+	"parsers" : {
+	    "type" : "array",
+	    "description" : "Parsers that this scrapers' variables and branches can execute.",
+	    "items" : { "$ref" : "parser" }
+	},
+	"scrapers" : {
+	    "type" : "array",
+	    "description" : "Scrapers this scraper and its branches can pipe to.",
+	    "items" : { "$ref" : "{id}" }
+	}
+    },
+
+    "additionalProperties" : {
+	"extend" : [ "../has_pipes", "../has_leaves", "has_variables" ]
+    }
+}

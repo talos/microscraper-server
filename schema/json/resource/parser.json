@@ -1,0 +1,23 @@
+
+{
+    "id" : "parser",
+    "extends" : "../resource",
+    "description" : "Parsers provide a pattern and a replacement value for matches.",
+    
+    "properties" : {
+	"replacement" : {
+	    "descriptions" : "This string, which is mustached and evaluated for backreferences, is returned for each match.",
+	    "type" : "string",
+	    "required" : true
+	},
+	"test" : {
+	    "type" : "array",
+	    "items" : {
+		"description" : "Patterns that test the sanity of the parser's output.",
+		"$ref" : "../pattern"
+	    },
+	    "required" : false
+	}
+    }
+    "additionalProperties" : "../pattern"
+}

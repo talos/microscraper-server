@@ -1,0 +1,14 @@
+
+{
+    "id" : "has_leaves",
+    "description" : "Permits connection to a leaf execution.",
+    
+    "properties": {
+	"branches": {
+	    "type" : "array",
+	    "items" : {
+		"additionalProperties" : { "$ref" : "execution/leaf" }
+	    }
+	}
+    }
+}

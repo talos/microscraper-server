@@ -1,0 +1,15 @@
+
+{
+    "id" : "resource",
+    "description" : "A generic MicroScraper resource.",
+    
+    "type" : "object",
+    "properties": {
+	"ref" : {
+	    "additionalProperties" : "reference",
+	    "description" : "Reference to the resource.",
+	    "required" : true
+	}
+    },
+    "additionalProperties" : false
+}

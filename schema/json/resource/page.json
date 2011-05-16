@@ -1,0 +1,28 @@
+
+{
+    "id" : "page",
+    "description" : "A MicroScraper scrapeable web page",
+    "extends" : "../resource",
+    
+    "properties" : {
+	"url" : {
+	    "description" : "The requested URL, which is mustached.",
+	    "type" : "string",
+	    "format" : "uri",
+	    "required" : true
+	},
+	"cookies" : {
+	    "$ref" : "headers"
+	},
+	"headers" : {
+	    "$ref" : "headers"
+	},
+	"loadBefore" : {
+	    "type" : "array",
+	    "description" : "An array of head requests to make beforehand.",
+	    "items" : {
+		"$ref" : "{id}/head"
+	    }
+	}
+    }
+}

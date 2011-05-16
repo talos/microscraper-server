@@ -1,0 +1,29 @@
+
+{
+    "id" : "pattern",
+    "description" : "A MicroScraper regexp pattern.",
+    
+    "type" : "object",
+    "properties" : {
+	"pattern" : {
+	    "type" : "string",
+	    "required" : true
+	},
+	"isCaseSensitive" : {
+	    "type" : "boolean",
+	    "required" : false,
+	    "default" : false
+	},
+	"isMultiline" : {
+	    "type" : "boolean",
+	    "required" : false,
+	    "default" : false
+	},
+	"doesDotMatchAll" : {
+	    "type" : "boolean",
+	    "required" : false,
+	    "default" : true
+	}
+    },
+    "additionalProperties" : false
+}

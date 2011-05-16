@@ -1,0 +1,17 @@
+
+{
+    "id" : "post",
+    "description" : "A MicroScraper scrapeable web page using POST",
+    "extends" : "../body",
+
+    "properties" : {
+	"posts" : {
+	    "type" : "../../headers",
+	    "required" : true
+	},
+	"method" : {
+	    "type" : "string",
+	    "enum" : ["post"]
+	}
+    }
+}

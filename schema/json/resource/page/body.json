@@ -1,0 +1,19 @@
+
+{
+    "id" : "body",
+    "description" : "A MicroScraper scrapeable web page -- Abstract Body",
+    "extends" : "../page",
+    
+    "properties" : {
+	"method"    : {
+	    "type" : "string",
+	    "enum" : ["get", "post"],
+	    "required" : true
+	},
+	"terminate" : {
+	    "type" : "array",
+	    "description" : "Patterns that terminate the loading of this body.",
+	    "items": { "$ref" : "../../pattern" }
+	}
+    }
+}
