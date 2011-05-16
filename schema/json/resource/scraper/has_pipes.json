@@ -1,13 +1,13 @@
 
 {
     "id" : "has_pipes",
-    "description" : "Permits connection to another scraper through reference.",
+    "description" : "Permits connection to another scraper through a reference.",
     
     "properties": {
 	"pipes": {
 	    "type" : "array",
 	    "items" : {
-		"$ref" : "reference"
+		"$ref" : "../../reference.json#"
 	    }
 	}
     }

@@ -6,6 +6,7 @@
     
     "properties" : {
 	"method"    : {
+	    "description" : "Method for body must be get or post.",
 	    "type" : "string",
 	    "enum" : ["get", "post"],
 	    "required" : true
@@ -13,7 +14,13 @@
 	"terminate" : {
 	    "type" : "array",
 	    "description" : "Patterns that terminate the loading of this body.",
-	    "items": { "$ref" : "../../pattern" }
+	    "items": { "$ref" : "../scraper/pattern" },
+	    "required" : false
+	},
+	"posts" : {
+	    "description" : "Optional hash of posts.",
+	    "additionalProperties" : { "$ref" : "name_value_pairs" },
+	    "required" : false
 	}
     }
 }

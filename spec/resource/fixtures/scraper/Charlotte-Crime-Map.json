@@ -1,0 +1,20 @@
+
+{
+    "id" : "Charlotte-Crime-Map",
+    "source" : { "$ref" : "../page/Charlotte-PD-Map-Data" },
+    "variables" : [
+	{
+	    "parser": { "$ref" : "../parser/Find-Charlotte-Results-Table" },
+	    "match" : 0,
+	    "leaves": [
+		{
+		    "parser" : { "$ref" : "../parser/Find-Row-Content" },
+		    "name"   : "Crime Row",
+		    "min"    : 1,
+		    "max"    : 2,
+		    "pipes"  : [ { "$ref" : "../scraper/Charlotte-Crime-Row" } ]
+		}
+	    ]
+	}
+    ]
+}

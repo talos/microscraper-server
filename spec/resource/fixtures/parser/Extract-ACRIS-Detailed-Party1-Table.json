@@ -1,0 +1,6 @@
+
+{
+    "id"         : "Extract-ACRIS-Detailed-Party1-Table",
+    "pattern"     : "PARTY 1.*?<table.*?(<table.*?</table>)",
+    "replacement" : "\\1"
+}

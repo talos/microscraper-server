@@ -5,8 +5,8 @@
 
     "properties" : {
 	"parser" : {
-	    "description" : "The parser used by this execution.",
-	    "additionalProperties" : { "$ref" : "resource/parser" },
+	    "description" : "A reference to the parser used by this execution.",
+	    "additionalProperties" : { "$ref" : "../../reference" },
 	    "required" : true
 	},
 	"name" : {

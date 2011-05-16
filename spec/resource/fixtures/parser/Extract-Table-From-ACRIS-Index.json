@@ -1,0 +1,6 @@
+
+{
+    "id"     : "Extract-Table-From-ACRIS-Index",
+    "pattern": "<!--Table Begin!-->(.*?)<!--Table End-->",
+    "replacement": "\\1"
+}

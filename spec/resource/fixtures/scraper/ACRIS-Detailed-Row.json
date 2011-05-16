@@ -1,0 +1,42 @@
+
+{
+    "id" : "ACRIS-Detailed-Row",
+    "source" : "{{Detailed Row}}",
+    "variables"  : [
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Name",
+	    "match"  : 0
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Address 1",
+	    "match"  : 1
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Address 2",
+	    "match"  : 2
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "City",
+	    "match"  : 3
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "State",
+	    "match"  : 4
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Zip",
+	    "match"  : 5
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Country",
+	    "match"  : 6
+	}
+    ]
+}

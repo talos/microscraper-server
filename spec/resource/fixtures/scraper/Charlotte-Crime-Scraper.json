@@ -1,0 +1,11 @@
+
+{
+    "id" : "Charlotte-Crime-Scraper",
+    "source": { "$ref" : "../page/Charlotte-PD-Agreement-Page" },
+    "variables" : {
+	"parser" : { "$ref" : "../parser/Find-ASP-Net-Viewstate" },
+	"match"  : 0,
+	"name"   : "Agreement Viewstate"
+    }
+    "pipes" : [ { "$ref" : "../scraper/Charlotte-Crime-Scraper-without-Viewstate" } ]
+}

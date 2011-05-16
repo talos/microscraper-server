@@ -1,0 +1,6 @@
+
+{
+    "id"     : "Extract-Doc-IDs-From-ACRIS-Index",
+    "pattern": "JavaScript:go_detail\\('(\\d+)'\\)",
+    "replacement": "\\1"
+}

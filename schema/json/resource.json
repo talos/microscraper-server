@@ -1,15 +1,28 @@
 
 {
-    "id" : "resource",
+    "id" : "./resource.json",
+    "$schema" : "http://json-schema.org/draft-03/hyper-schema#",
     "description" : "A generic MicroScraper resource.",
     
     "type" : "object",
     "properties": {
-	"ref" : {
-	    "additionalProperties" : "reference",
-	    "description" : "Reference to the resource.",
-	    "required" : true
+	"id" : {
+	    "description" : "The ID of a microscraper resource.  Must be alphanumeric, including dashes.",
+	    "type" : "string",
+	    "required" : true,
+	    "pattern" : "/[\\w\\d\\-]*/"
 	}
     },
+    "links" : [
+	{
+	    "href": "./",
+	    "rel" : "root"
+	},
+	{
+	    "href": "/resource/{id}.json",
+	    "rel" : "self",
+	}
+    ],
+    
     "additionalProperties" : false
 }

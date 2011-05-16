@@ -1,7 +1,7 @@
 
 {
     "id" : "parser",
-    "extends" : "../resource",
+    "$schema" : "../resource.json#",
     "description" : "Parsers provide a pattern and a replacement value for matches.",
     
     "properties" : {
@@ -14,10 +14,10 @@
 	    "type" : "array",
 	    "items" : {
 		"description" : "Patterns that test the sanity of the parser's output.",
-		"$ref" : "../pattern"
+		"additionalProperties" : { "$ref" : "/resource/parser/pattern.json#" }
 	    },
 	    "required" : false
 	}
-    }
-    "additionalProperties" : "../pattern"
+    },
+    "additionalProperties" : { "$ref" : "/resource/parser/pattern.json#" }
 }

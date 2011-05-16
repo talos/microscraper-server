@@ -1,0 +1,23 @@
+
+{
+    "id": "ACRIS-Detailed",
+    "source"  : { "$ref" : "../page/ACRIS-Detailed-View" },
+    "leaves"  : [
+	{
+	    "parser": { "$ref" : "../parser/Extract-ACRIS-Detailed-Party1-Table" },
+	    "name"  : "Party1 Table",
+	    "min"   :  0,
+	    "max"   : -1,
+	    "name"  : "Detailed Row",
+	    "pipes" : [ { "$ref" : "../scraper/ACRIS-Detailed-Row" } ]
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Extract-ACRIS-Detailed-Party2-Table" },
+	    "name"   : "Party2 Table",
+	    "min"    :  0,
+	    "max"    : -1,
+	    "name"   : "Detailed Row",
+	    "pipes"  : [ { "$ref" : "../scraper/ACRIS-Detailed-Row" } ]
+	}
+    ]
+}

@@ -1,7 +1,7 @@
 
 {
     "id" : "variable",
-    "extends" : "../execution",
+    "$schema" : "../execution.json#",
     "description" : "A one-to-one execution that can link to other executions, both variables and leaves.  It cannot be piped, although its value would be exported were its parents scraper to be piped.",
     
     "properties" : {
@@ -12,6 +12,9 @@
 	}
     },
     "additionalProperties" : {
-	"extends" : ["../has_leaves", "../has_variables"]
+	"extends" : [
+	    { "$ref" : "../has_leaves.json#" },
+	    { "$ref" : "../has_variables.json#" }
+	]
     }
 }

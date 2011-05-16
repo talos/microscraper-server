@@ -1,0 +1,11 @@
+
+{
+    "id": "Charlotte-PD-Map-Load",
+    "method":"post",
+    "url": "http://maps.cmpdweb.org/cmpdnet/map.aspx",
+    "posts": {
+	"__VIEWSTATE": "{{Agreement Viewstate}}",
+	"btnAgree":    "Accept",
+	"txtError":    ""
+    }
+}

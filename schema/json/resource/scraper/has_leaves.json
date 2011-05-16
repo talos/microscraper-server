@@ -7,7 +7,7 @@
 	"branches": {
 	    "type" : "array",
 	    "items" : {
-		"additionalProperties" : { "$ref" : "execution/leaf" }
+		"$ref" : "./execution/leaf.json#"
 	    }
 	}
     }

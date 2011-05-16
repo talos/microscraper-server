@@ -1,0 +1,32 @@
+
+{
+    "id" : "Charlotte-Crime-Row",
+    "source" : "{{Crime Row}}",
+    "variables" : [
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "match"  : 0,
+	    "name"   : "Complaint Number"
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "match"  : 1,
+	    "name"   : "Date Reported"
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "match"  : 2,
+	    "name"   : "Street Block"
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "match"  : 3,
+	    "name"   : "Incident Type"
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "match"  : 4,
+	    "name"   : "Clearance Status"
+	}
+    ]
+}

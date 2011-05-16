@@ -1,0 +1,6 @@
+
+{
+    "id"   : "ACRIS-Detailed-View",
+    "method": "get",
+    "url"   : "http://a836-acris.nyc.gov/Scripts/DocSearch.dll/Detail?Doc_ID={{Document ID}}"
+}

@@ -1,0 +1,6 @@
+
+{
+    "id": "Charlotte-PD-Agreement-Page",
+    "method":"get",
+    "url": "http://maps.cmpdweb.org/cmpdnet/agreement.aspx?ref=map"
+}

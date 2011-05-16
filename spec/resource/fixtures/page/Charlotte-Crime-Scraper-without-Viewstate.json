@@ -1,0 +1,29 @@
+{
+    "id" : "Charlotte-Crime-Scraper-without-Viewstate",
+    "source" : { "$ref": "Charlotte-PD-Map-Load" },
+    "variables" : [
+	{
+	    "parser" : { "$ref" : "../parser/Find-ASP-Net-Viewstate" },
+	    "match"  : 0,
+	    "name"   : "Map Viewstate"
+	}
+    ],
+    "pipes" : [ { "$ref" : "Charlotte-Crime-Map" } ],
+    "resources": {
+	"pages:" [{
+	    "id": "Charlotte-PD-Map-Load",
+	    "method":"post",
+	    "url": "http://maps.cmpdweb.org/cmpdnet/map.aspx",
+	    "posts": {
+		"__VIEWSTATE": "{{Agreement Viewstate}}",
+		"btnAgree":    "Accept",
+		"txtError":    ""
+	    }
+	}],
+	"parsers" : [{
+	    "id": "Find-ASP.Net-Viewstate",
+	    "pattern": "__VIEWSTATE\"\\s+value\\s*=\\s*\"([^\"]*)\"",
+	    "replacement": "\\1"
+	}]
+    }
+}

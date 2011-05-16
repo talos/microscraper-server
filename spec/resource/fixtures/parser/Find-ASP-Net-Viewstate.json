@@ -1,0 +1,6 @@
+
+{
+    "id": "Find-ASP-Net-Viewstate",
+    "pattern": "__VIEWSTATE\"\\s+value\\s*=\\s*\"([^\"]*)\"",
+    "replacement": "\\1"
+}

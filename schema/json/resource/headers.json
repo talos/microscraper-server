@@ -1,9 +1,0 @@
-
-{
-    "id"   : "headers",
-    "description" : "A hash of headers. Not encoded.  Values can only be strings.",
-    "type" : "object",
-    "patternProperties" : {
-	".*" : "string"
-    }
-}

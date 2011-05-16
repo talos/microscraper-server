@@ -1,0 +1,31 @@
+
+{
+    "id" : "ACRIS-Block-Details",
+    "source" : {
+	"$ref" : "../page/ACRIS-Block-Index"
+    },
+    "variables" : [
+	{
+	    "parser" : { "$ref" : "../parser/Extract-Table-From-ACRIS-Index" },
+	    "match"  : 0,
+	    "leaves" : [
+		{
+		    "parser" : { "$ref" : "../parser/Extract-Table-Row" },
+		    "name"   : "Index Row",
+		    "min"    : 0,
+		    "max"    : -1,
+		    "pipes"  : [ { "$ref" : "../scraper/ACRIS-Index-Row" } ]
+		}
+	    ]
+	}
+    ],
+    "leaves" : [
+	{
+	    "parser" : { "$ref" : "../parser/Extract-Doc-IDs-From-ACRIS-Index" },
+	    "name"   : "Document ID",
+	    "min"    : 0,
+	    "max"    : -1,
+	    "pipes"  : [ { "$ref" : "../scraper/ACRIS-Detailed" } ]
+	}
+    ]
+}

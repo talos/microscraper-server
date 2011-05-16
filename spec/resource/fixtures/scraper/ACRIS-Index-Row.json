@@ -1,0 +1,56 @@
+{
+    "id" : "ACRIS-Index-Row",
+    "source" : "{{Index Row}}",
+    "variables" : [
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Reel/Pg/File",
+	    "match"  : 2
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "CRFN",
+	    "match"  : 3
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Lot",
+	    "match"  : 4
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Partial",
+	    "match"  : 5
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Recorded/Filed",
+	    "match"  : 6
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Document Type",
+	    "match"  : 7
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Pages",
+	    "match"  : 8
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Party1",
+	    "match"  : 9
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Party2",
+	    "match"  : 10
+	},
+	{
+	    "parser" : { "$ref" : "../parser/Find-Cell-Content" },
+	    "name"   : "Amount",
+	    "match"  : 14
+	}
+    ]
+}

@@ -1,0 +1,6 @@
+
+{
+    "id": "Find-Charlotte-Results-Table",
+    "pattern": "<div\\s+id\\s*=\\s*\"dgrResults_page\".*?/div>",
+    "replacement": "\\0"
+}

@@ -1,0 +1,12 @@
+{
+    "id" : "Charlotte-Crime-Scraper-without-Viewstate",
+    "source" : { "$ref": "../page/Charlotte-PD-Map-Load" },
+    "variables" : [
+	{
+	    "parser" : { "$ref" : "../parser/Find-ASP-Net-Viewstate" },
+	    "match"  : 0,
+	    "name"   : "Map Viewstate"
+	}
+    ],
+    "pipes" : [ { "$ref" : "../scraper/Charlotte-Crime-Map" } ]
+}

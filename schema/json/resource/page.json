@@ -2,9 +2,15 @@
 {
     "id" : "page",
     "description" : "A MicroScraper scrapeable web page",
-    "extends" : "../resource",
+    "$schema" : { "$ref" : "../resource.json#" } ,
     
     "properties" : {
+	"method": {
+	    "description" : "The HTTP request type to use.  Either Post, Get, or Head.",
+	    "type" : "string",
+	    "enum" : ["post", "head", "get"],
+	    "required" : true
+	},
 	"url" : {
 	    "description" : "The requested URL, which is mustached.",
 	    "type" : "string",
@@ -12,17 +18,41 @@
 	    "required" : true
 	},
 	"cookies" : {
-	    "$ref" : "headers"
+	    "description" : "Name-value pairs of cookies.",
+	    "additionalProperties" : {
+		"$ref" : "/resource/page/name_value_pairs.json#"
+	    },
+	    "required" : false
 	},
 	"headers" : {
-	    "$ref" : "headers"
+	    "description" : "Name-value pairs of generic headers.",
+	    "additionalProperties" : {
+		"$ref" : "/resource/page/name_value_pairs.json#"
+	    },
+	    "required" : false
 	},
 	"loadBefore" : {
 	    "type" : "array",
-	    "description" : "An array of head requests to make beforehand.",
+	    "description" : "An of references to page requests to make beforehand. No data is extracted from these pages.",
 	    "items" : {
-		"$ref" : "{id}/head"
-	    }
+		"$ref" : "/reference.json#"
+	    },
+	    "required" : false
+	},
+	"terminate" : {
+	    "type" : "array",
+	    "description" : "An array of references to parsers that terminate the loading of this page's body.  No data is extracted from these parsers.",
+	    "items": {
+		"$ref" : "/reference.json#"
+	    },
+	    "required" : false
+	},
+	"posts" : {
+	    "description" : "Optional hash of posts.",
+	    "additionalProperties" : {
+		"$ref" : "/resource/page/name_value_pairs.json#"
+	    },
+	    "required" : false
 	}
     }
 }
