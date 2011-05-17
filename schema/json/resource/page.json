@@ -39,11 +39,11 @@
 	    },
 	    "required" : false
 	},
-	"terminate" : {
+	"terminates" : {
 	    "type" : "array",
-	    "description" : "An array of references to parsers that terminate the loading of this page's body.  No data is extracted from these parsers.",
+	    "description" : "An array of patterns that terminate the loading of this page's body.",
 	    "items": {
-		"$ref" : "/reference.json#"
+		"$ref" : "/resource/parser/pattern.json#"
 	    },
 	    "required" : false
 	},

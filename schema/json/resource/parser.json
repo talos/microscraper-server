@@ -10,11 +10,11 @@
 	    "type" : "string",
 	    "required" : true
 	},
-	"test" : {
+	"tests" : {
 	    "type" : "array",
+	    "description" : "Patterns that test the sanity of the parser's output.",
 	    "items" : {
-		"description" : "Patterns that test the sanity of the parser's output.",
-		"additionalProperties" : { "$ref" : "/resource/parser/pattern.json#" }
+		"$ref" : "/resource/parser/pattern.json#"
 	    },
 	    "required" : false
 	}
