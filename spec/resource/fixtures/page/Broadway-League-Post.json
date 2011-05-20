@@ -1,7 +1,7 @@
 
 {
     "method": "post",
-    "url"   : "http://www.broadwayleague.com/index.php?url_identifier=nyc-grosses-11&page-no={{page-no}}",
+    "url"   : "http://www.broadwayleague.com/index.php?url_identifier=nyc-grosses-11",
     "posts" : {
 	"date1": "06/10/1984",
 	"date2": "05/20/2011",

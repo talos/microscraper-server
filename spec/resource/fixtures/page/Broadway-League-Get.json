@@ -1,0 +1,5 @@
+
+{
+    "method": "get",
+    "url"   : "http://www.broadwayleague.com/index.php?url_identifier=nyc-grosses-11&page-no={{page-no}}"
+}

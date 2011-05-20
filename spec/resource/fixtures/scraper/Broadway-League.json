@@ -1,22 +1,12 @@
 
 {
-    "source" : { "$ref" : "../page/Broadway-League.json" },
+    "source" : { "$ref" : "../page/Broadway-League-Post.json" },
     "variables" : [
 	{
-	    "parser": { "$ref" : "../parser/Extract-Broadway-League-Table.json" },
-	    "match" : 0,
-	    "leaves": [{
-		"parser" : { "$ref" : "../parser/Row.json" },
-		"min" : 1,
-		"max" : -1,
-		"name" : "Broadway League Row",
-		"pipes" : [{ "$ref" : "../scraper/Broadway-League-Row.json"}]
-	    }]
-	},{
 	    "parser": { "$ref" : "../parser/Broadway-League-Next-Page.json" },
 	    "match" : 0,
-	    "name"  : "page-no",
-	    "pipes" : [{ "$ref" : "../scraper/Broadway-League.json" }]
+	    "name"  : "page-no"
 	}
-    ]
+    ],
+    "pipes" : [{ "$ref" : "../scraper/Broadway-League-Next-Page.json" }]
 }
