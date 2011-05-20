@@ -1,6 +1,0 @@
-
-{
-    "id" : "Find-Cell-Content",
-    "pattern": "<td(.*?)</td>",
-    "replacement": "\\1"
-}

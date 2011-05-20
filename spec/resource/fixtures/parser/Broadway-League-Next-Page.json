@@ -1,0 +1,5 @@
+
+{
+    "pattern" : "<a\\s+href=\"[^>]*?page-no=(\\d+)[^>]*?title=\"next page\">",
+    "replacement" : "$1"
+}

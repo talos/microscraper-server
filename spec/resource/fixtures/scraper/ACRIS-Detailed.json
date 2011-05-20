@@ -1,6 +1,5 @@
 
 {
-    "id": "ACRIS-Detailed",
     "source"  : { "$ref" : "../page/ACRIS-Detailed-View.json" },
     "leaves"  : [
 	{
@@ -19,3 +18,4 @@
 	}
     ]
 }
+

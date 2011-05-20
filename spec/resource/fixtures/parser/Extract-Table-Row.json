@@ -1,6 +1,0 @@
-
-{
-    "id"     : "Extract-Table-Row",
-    "pattern": "<tr(.*?)</tr>",
-    "replacement": "\\1"
-}

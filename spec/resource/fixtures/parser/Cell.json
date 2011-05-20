@@ -1,0 +1,5 @@
+
+{
+    "pattern": "<td[^>]*>(.*?)</td>",
+    "replacement": "$1"
+}

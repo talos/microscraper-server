@@ -1,0 +1,39 @@
+
+{
+    "source": "{{Broadway League Row}}",
+    "variables" : [
+	{
+	    "parser" : { "$ref" : "../parser/Cell.json" },
+	    "match"  : 0,
+	    "name"   : "Week end"
+	},{
+	    "parser" : { "$ref" : "../parser/Cell.json" },
+	    "match"  : 1,
+	    "name"   : "Show"
+	},{
+	    "parser" : { "$ref" : "../parser/Cell.json" },
+	    "match"  : 2,
+	    "name"   : "Theatre"
+	},{
+	    "parser" : { "$ref" : "../parser/Cell.json" },
+	    "match"  : 3,
+	    "name"   : "# Prev"
+	},{
+	    "parser" : { "$ref" : "../parser/Cell.json" },
+	    "match"  : 4,
+	    "name"   : "# Perfs"
+	},{
+	    "parser" : { "$ref" : "../parser/Cell.json" },
+	    "match"  : 5,
+	    "name"   : "Gross*"
+	},{
+	    "parser" : { "$ref" : "../parser/Cell.json" },
+	    "match"  : 6,
+	    "name"   : "Attend*"
+	},{
+	    "parser" : { "$ref" : "../parser/Cell.json" },
+	    "match"  : 7,
+	    "name"   : "%Cap"
+	}
+    ]
+}
