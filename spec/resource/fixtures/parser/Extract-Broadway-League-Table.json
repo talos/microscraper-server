@@ -1,0 +1,5 @@
+
+{
+    "pattern": "<table\s+id=\"database\".*?</table>",
+    "replacement": "\\0"
+}

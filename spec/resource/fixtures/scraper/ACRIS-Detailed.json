@@ -5,7 +5,6 @@
     "leaves"  : [
 	{
 	    "parser": { "$ref" : "../parser/Extract-ACRIS-Detailed-Party1-Table.json" },
-	    "name"  : "Party1 Table",
 	    "min"   :  0,
 	    "max"   : -1,
 	    "name"  : "Detailed Row",
@@ -13,7 +12,6 @@
 	},
 	{
 	    "parser" : { "$ref" : "../parser/Extract-ACRIS-Detailed-Party2-Table.json" },
-	    "name"   : "Party2 Table",
 	    "min"    :  0,
 	    "max"    : -1,
 	    "name"   : "Detailed Row",

@@ -2,5 +2,8 @@
 {
     "id"   : "ACRIS-Block-Index",
     "method": "get",
-    "url"   : "http://a836-acris.nyc.gov/bblsearch/bblsearch.asp?borough={{Borough}}&block={{Block}}&lot={{Lot}}"
+    "url"   : "http://a836-acris.nyc.gov/bblsearch/bblsearch.asp?borough={{Borough}}&block={{Block}}&lot={{Lot}}",
+    "cookies" : {
+	"JUMPPAGE" : "YES"
+    }
 }

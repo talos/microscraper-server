@@ -1,0 +1,11 @@
+
+{
+    "source" : { "$ref" : "../page/Broadway-League.json" },
+    "variables" : [{
+	"parser": { "$ref" : "../parser/Extract-Broadway-League-Table.json" },
+	"match" : 0,
+	"leaves": [{
+	    "parser" : { "$ref" : "../parser/"
+	}]
+    }]
+}
