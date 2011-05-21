@@ -1,5 +1,5 @@
 
 {
-    "pattern": "<td[^>]*>(.*?)</td>",
+    "pattern": "<td[^>]*>\\s*(.*?)\\s*</td>",
     "replacement": "$1"
 }
