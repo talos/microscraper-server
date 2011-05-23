@@ -1,0 +1,13 @@
+
+{
+    "id" : "finds_one",
+    "extends" : { "$ref" : "../mixin.json" },
+    "description" : "Permits connection to a find_one resource.",
+    
+    "properties": {
+	"finds_one": {
+	    "type" : "array",
+	    "items" : { "$ref" : "../resource/find_one.json#" }
+	}
+    }
+}

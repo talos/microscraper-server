@@ -1,0 +1,13 @@
+
+{
+    "id" : "spawns_scrapers",
+    "extends" : { "$ref" : "../mixin.json" },
+    "description" : "Permits connection to other scrapers.",
+    
+    "properties": {
+	"then": {
+	    "type" : "array",
+	    "items" : { "$ref" : "../resource/scraper.json#" }
+	}
+    }
+}

@@ -1,0 +1,7 @@
+
+{
+    "id" : "mixin",
+    "description" : "Mixins for resources to share link arrays.",
+
+    "type" : "object"
+}

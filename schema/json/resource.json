@@ -1,18 +1,15 @@
 
 {
-    "id" : "./resource.json",
+    "id" : "resource",
     "$schema" : "http://json-schema.org/draft-03/hyper-schema#",
     "description" : "A generic MicroScraper resource.",
     
     "type" : "object",
-    "links" : [
-	{
-	    "href": "./",
-	    "rel" : "root"
-	},
-	{
-	    "href": "/resource/{id}.json",
-	    "rel" : "self",
+    "properties" : [
+	"$ref" : {
+	    "description" : "URI where this resource should be loaded from.  The tag will be replaced with the contents of the URI.",
+	    "type"   : "string",
+	    "format" : "uri"
 	}
     ],
     

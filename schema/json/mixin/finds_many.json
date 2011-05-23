@@ -1,0 +1,13 @@
+
+{
+    "id" : "finds_many",
+    "extends" : { "$ref" : "../mixin.json" },
+    "description" : "Permits connection to a find_many resource.",
+    
+    "properties": {
+	"finds_many": {
+	    "type" : "array",
+	    "items" : { "$ref" : "../resource/find_many.json#" }
+	}
+    }
+}

@@ -1,7 +1,8 @@
 
 {
     "id" : "pattern",
-    "description" : "A MicroScraper regexp pattern.",
+    "extends" : { "$ref" : "../resource.json#" },
+    "description" : "A regexp pattern.",
     
     "type" : "object",
     "properties" : {

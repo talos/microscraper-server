@@ -1,22 +1,22 @@
 
 {
-    "id"  : "scraper",
-    "$schema" : { "$ref" : "../resource.json#" } ,
+    "id"      : "scraper",
+    "extends" : { "$ref" : "../resource.json#" } ,
     "description" : "A scraper contains a source string or web page, a set of parsers, and a set of linked variables and branches.",
     
     "properties" : {
 	"source" : {
-	    "description" : "The source of data for this scraper.  Either a link to a page resource to load or a mustacheable string.",
-	    "type"        : ["string", "object"],
-	    "additionalProperties" : { "$ref" : "/reference.json#" }
-	}
+	    "description" : "The source page for this scraper.  Must be specified in execution through a spawning parent or the user herself.",
+	    "additionalProperties" : { "$ref" : "page.json#" }
+	},
+	"required" : false
     },
 
     "additionalProperties" : {
 	"extends" : [
-	    { "$ref" : "/resource/scraper/has_pipes.json#"     },
-	    { "$ref" : "/resource/scraper/has_leaves.json#"    },
-	    { "$ref" : "/resource/scraper/has_variables.json#" }
+	    { "$ref" : "../mixin/finds_many.json#"     },
+	    { "$ref" : "../mixin/finds_one.json#"    },
+	    { "$ref" : "../mixin/spawns_scrapers.json#" }
 	]
     }
 }

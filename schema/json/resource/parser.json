@@ -1,23 +1,20 @@
 
 {
     "id" : "parser",
-    "$schema" : "../resource.json#",
+    "extends" : { "$ref" : "pattern.json#" },
     "description" : "Parsers provide a pattern and a replacement value for matches.",
     
     "properties" : {
 	"replacement" : {
-	    "descriptions" : "This string, which is mustached and evaluated for backreferences, is returned for each match.",
+	    "description" : "This string, which is mustached and evaluated for backreferences, is returned for each match.",
 	    "type" : "string",
 	    "required" : true
 	},
 	"tests" : {
 	    "type" : "array",
 	    "description" : "Patterns that test the sanity of the parser's output.",
-	    "items" : {
-		"$ref" : "/resource/parser/pattern.json#"
-	    },
+	    "items" : { "$ref" : "pattern.json#" },
 	    "required" : false
 	}
-    },
-    "additionalProperties" : { "$ref" : "/resource/parser/pattern.json#" }
+    }
 }

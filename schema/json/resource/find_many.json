@@ -1,0 +1,25 @@
+
+{
+    "id" : "find_many",
+    "extends" : { "$ref" : "parser.json#" },
+    "description" : "Find many matches from some input using a parser.  Can send matches to new scrapers.",
+    
+    "properties" : {
+	"min" : {
+	    "type" : "integer",
+	    "description" : "The first of the parser's matches to export. This is 0-indexed, so '0' is the first match.",
+	    "required" : true
+	},
+	"max" : {
+	    "type" : "integer",
+	    "description" : "The last of the parser's matches to export.  Negative numbers count backwards, so -1 is the last match.",
+	    "required" : true
+	},
+	"name" : {
+	    "type" : "string",
+	    "description" : "If specified, each match will exist as a Variable under this name in their respective spawned scrapers.",
+	    "required" : false
+	}
+    },
+    "additionalProperties" : { "$ref" : "../mixin/spawns_scrapers.json#" }
+}

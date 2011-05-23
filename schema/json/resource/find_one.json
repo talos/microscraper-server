@@ -1,0 +1,25 @@
+
+{
+    "id" : "find_one",
+    "extends" : { "$ref" : "parser.json#" },
+    "description" : "Find one match from some input using a parser.  Can execute find_one or find_many on the resulting match, and it can also be added to the Variables of the parent scraper.",
+    
+    "properties" : {
+	"match" : {
+	    "type" : "integer",
+	    "description" : "A variable can be pulled from only a single scraper match.",
+	    "required" : true
+	},
+	"name" : {
+	    "type" : "string",
+	    "description" : "If specified, the enclosing Scraper (and its children) have access to the match through this name in the Variables instance.",
+	    "required" : false
+	}
+    },
+    "additionalProperties" : {
+	"extends" : [
+	    { "$ref" : "../mixin/finds_one.json#" },
+	    { "$ref" : "../mixin/finds_many.json#" }
+	]
+    }
+}

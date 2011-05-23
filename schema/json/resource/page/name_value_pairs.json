@@ -1,9 +1,0 @@
-
-{
-    "id"   : "name_value_pairs",
-    "description" : "A hash of name value pairs. Not encoded.  Values can only be strings.",
-    "type" : "object",
-    "patternProperties" : {
-	".*" : "string"
-    }
-}

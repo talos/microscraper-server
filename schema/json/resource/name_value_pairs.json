@@ -1,0 +1,10 @@
+
+{
+    "id"   : "name_value_pairs",
+    "extends" : { "$ref" : "../resource.json#" },
+    
+    "description" : "A hash of name value pairs. Not encoded.  Values must be strings.",
+    "patternProperties" : {
+	".*" : "string"
+    }
+}
