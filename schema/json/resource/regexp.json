@@ -1,0 +1,31 @@
+
+{
+    "id" : "regexp",
+    "extends" : { "$ref" : "../resource.json#" },
+    "description" : "A regular expression.",
+    
+    "type" : "object",
+    "properties" : {
+	"pattern" : {
+	    "description" : "The regexp's pattern.  Mustache compiled before it is used.",
+	    "type" : "string",
+	    "required" : true
+	},
+	"case_sensitive" : {
+	    "type" : "boolean",
+	    "required" : false,
+	    "default" : false
+	},
+	"multiline" : {
+	    "type" : "boolean",
+	    "required" : false,
+	    "default" : false
+	},
+	"dot_matches_all" : {
+	    "type" : "boolean",
+	    "required" : false,
+	    "default" : true
+	}
+    },
+    "additionalProperties" : false
+}

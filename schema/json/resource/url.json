@@ -1,0 +1,16 @@
+
+{
+    "id" : "url",
+    "extends" : { "$ref" : "../resource.json#" },
+    "description" : "A URL to mustache.",
+
+    "type" : "string",
+    "properties" : {
+	"url": {
+	    "description" : "The requested URL, which is mustached.",
+	    "type" : "string",
+	    "format" : "uri",
+	    "required" : true
+	}
+    }
+}
