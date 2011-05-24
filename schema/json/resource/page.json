@@ -12,12 +12,6 @@
 	    "required" : false,
 	    "default"  : "get"
 	},
-	"url" : {
-	    "description" : "The requested URL, which is mustached.",
-	    "type" : "string",
-	    "format" : "uri",
-	    "required" : true
-	},
 	"cookies" : {
 	    "description" : "Name-value pairs of cookies.",
 	    "additionalProperties" : {
@@ -40,8 +34,8 @@
 	},
 	"stop_because" : {
 	    "type" : "array",
-	    "description" : "Patterns that terminate the loading of this page's body.",
-	    "items": { "$ref" : "pattern.json#" },
+	    "description" : "Regexps that terminate the loading of this page's body.",
+	    "items": { "$ref" : "regexp.json#" },
 	    "required" : false
 	},
 	"posts" : {
@@ -49,5 +43,6 @@
 	    "additionalProperties" : { "$ref" : "name_value_pairs.json#" },
 	    "required" : false
 	}
-    }
+    },
+    "additionalProperties" : { "$ref" : "url.json#" }
 }

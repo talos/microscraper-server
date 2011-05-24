@@ -1,7 +1,7 @@
 
 {
     "id" : "find_many",
-    "extends" : { "$ref" : "parser.json#" },
+    "extends" : { "$ref" : "find.json#" },
     "description" : "Find many matches from some input using a parser.  Can send matches to new scrapers.",
     
     "properties" : {

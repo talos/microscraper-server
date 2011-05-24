@@ -2,7 +2,7 @@
 {
     "id"      : "scraper",
     "extends" : { "$ref" : "../resource.json#" } ,
-    "description" : "A scraper contains a source string or web page, a set of parsers, and a set of linked variables and branches.",
+    "description" : "A scraper can include a web page, a set of findOnes, a set of findManys, and a set of other scrapers to launch.",
     
     "properties" : {
 	"source" : {
