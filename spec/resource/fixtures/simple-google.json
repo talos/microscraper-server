@@ -1,0 +1,9 @@
+
+{
+ "source"    : { "url" : "http://www.google.com/search?q={{query}}" },
+ "finds_many"  : [{
+   "name"   : "what do we say after {{query}}?",
+   "pattern"     : "{{query}}\\s+(\\w+)",
+   "replacement" : "$1"
+ }]
+}
