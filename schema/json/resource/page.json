@@ -2,7 +2,7 @@
 {
     "id" : "page",
     "description" : "A web page.",
-    "extends" : { "$ref" : "../resource.json#" } ,
+    "extends" : { "$ref" : "url.json#" } ,
     
     "properties" : {
 	"method": {
@@ -43,6 +43,5 @@
 	    "additionalProperties" : { "$ref" : "name_value_pairs.json#" },
 	    "required" : false
 	}
-    },
-    "additionalProperties" : { "$ref" : "url.json#" }
+    }
 }
