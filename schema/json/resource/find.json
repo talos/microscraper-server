@@ -8,7 +8,8 @@
 	"replacement" : {
 	    "description" : "This string, which is mustached and evaluated for backreferences, is returned for each match.",
 	    "type" : "string",
-	    "required" : true
+	    "required" : false,
+	    "default" : "$0"
 	},
 	"tests" : {
 	    "type" : "array",

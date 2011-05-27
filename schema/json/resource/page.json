@@ -1,8 +1,11 @@
 
 {
     "id" : "page",
-    "description" : "A web page.",
-    "extends" : { "$ref" : "url.json#" } ,
+    "description" : "A web page to scrape.",
+    "extends" : [
+	{ "$ref" : "url.json#" } ,
+	{ "$ref" : "scraper.json#" }
+    ],
     
     "properties" : {
 	"method": {

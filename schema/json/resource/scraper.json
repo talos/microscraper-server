@@ -4,14 +4,6 @@
     "extends" : { "$ref" : "../resource.json#" } ,
     "description" : "A scraper can include a web page, a set of findOnes, a set of findManys, and a set of other scrapers to launch.",
     
-    "properties" : {
-	"source" : {
-	    "description" : "The source page for this scraper.  Must be specified in execution through a spawning parent or the user herself.",
-	    "additionalProperties" : { "$ref" : "page.json#" }
-	},
-	"required" : false
-    },
-
     "additionalProperties" : {
 	"extends" : [
 	    { "$ref" : "../mixin/finds_many.json#"     },
