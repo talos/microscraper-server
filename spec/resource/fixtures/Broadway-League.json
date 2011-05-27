@@ -1,0 +1,75 @@
+
+{
+    "method": "post",
+    "url"   : "http://www.broadwayleague.com/index.php?url_identifier=nyc-grosses-11&page-no={{page-no}}",
+    "posts" : {
+	"date1": "06/10/1984",
+	"date2": "05/20/2011",
+	"gross_show_name": "",
+	"gross_theatre"  : "",
+	"session"        : "on"
+    },
+    "finds_one" : [
+	{
+	    "pattern" : "<a\\s+href=\"[^>]*?page-no=(\\d+)[^>]*?title=\"next page\">",
+	    "replacement" : "$1",
+	    "match" : 0,
+	    "name"  : "page-no"
+	},{
+	    "pattern": "<table\\s+id=\"database\".*?</table>",
+	    "replacement": "$0",
+	    "match" : 0,
+	    "finds_many": [{
+		"pattern": "<tr(.*?)</tr>",
+		"replacement": "$1",
+		"min" : 2,
+		"max" : -1,
+		"then" : [{ 
+		    "finds_one" : [
+			{
+			    "pattern": "<td[^>]*>\\s*(.*?)\\s*</td>",
+			    "replacement": "$1",
+			    "match"  : 0,
+			    "name"   : "Week end"
+			},{
+			    "pattern": "<td[^>]*>\\s*(.*?)\\s*</td>",
+			    "replacement": "$1",
+			    "match"  : 1,
+			    "name"   : "Show"
+			},{
+			    "pattern": "<td[^>]*>\\s*(.*?)\\s*</td>",
+			    "replacement": "$1",
+			    "match"  : 2,
+			    "name"   : "Theatre"
+			},{
+			    "pattern": "<td[^>]*>\\s*(.*?)\\s*</td>",
+			    "replacement": "$1",
+			    "match"  : 3,
+			    "name"   : "# Prev"
+			},{
+			    "pattern": "<td[^>]*>\\s*(.*?)\\s*</td>",
+			    "replacement": "$1",
+			    "match"  : 4,
+			    "name"   : "# Perfs"
+			},{
+			    "pattern": "<td[^>]*>\\s*(.*?)\\s*</td>",
+			    "replacement": "$1",
+			    "match"  : 5,
+			    "name"   : "Gross*"
+			},{
+			    "pattern": "<td[^>]*>\\s*(.*?)\\s*</td>",
+			    "replacement": "$1",
+			    "match"  : 6,
+			    "name"   : "Attend*"
+			},{
+			    "pattern": "<td[^>]*>\\s*(.*?)\\s*</td>",
+			    "replacement": "$1",
+			    "match"  : 7,
+			    "name"   : "%Cap"
+			}
+		    ]
+		}]
+	    }]
+	}],
+    "then" : [{ "$ref" : "#" }]
+}
